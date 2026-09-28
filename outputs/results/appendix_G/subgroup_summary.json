@@ -1,0 +1,355 @@
+{
+  "protocols": {
+    "pacdemons": "C6 (internal C7) · Direct · T=0.8 · gpt-4o-mini · ben · +PC · seed 0",
+    "womenwork": "C6 (internal C7) · VS-CoT · T=0.8 · gpt-5.4-mini · ben · +PC · seeds 0/1/2 averaged"
+  },
+  "prediction_files": {
+    "pacdemons": "/Users/helinekmen/Library/Caches/digitaltwin_calibration/screening_T08/pacdemons/C7_gpt4omini_T08_ben_direct_nocot_pc_s0.jsonl",
+    "womenwork_seeds": [
+      "/Users/helinekmen/Library/Caches/digitaltwin_calibration/screening_vs_cot_T08/womenwork/C7_gpt54mini_T08_ben_vs_cot_nocot_pc_s0.jsonl",
+      "/Users/helinekmen/Library/Caches/digitaltwin_calibration/screening_vs_cot_T08/womenwork/C7_gpt54mini_T08_ben_vs_cot_nocot_pc_s1.jsonl",
+      "/Users/helinekmen/Library/Caches/digitaltwin_calibration/screening_vs_cot_T08/womenwork/C7_gpt54mini_T08_ben_vs_cot_nocot_pc_s2.jsonl"
+    ]
+  },
+  "full_sample": {
+    "pacdemons": {
+      "n": 1707,
+      "obs_pos": 0.0492091388400703,
+      "sim_pos": 0.06736965436438196,
+      "diff": 0.01816051552431166,
+      "jsd": 0.0010876807816224193,
+      "mcc": 0.42506857453793495,
+      "rec_pos": 0.5357142857142857,
+      "prec_pos": 0.391304347826087
+    },
+    "womenwork": {
+      "n": 2588,
+      "obs_mean": 3.2426584234930447,
+      "sim_mean": 3.241499227202473,
+      "err": -0.0011591962905717068,
+      "wass": 0.18122102009273577,
+      "kw": 0.3121070165629525
+    }
+  },
+  "n_threshold_for_suppression": 50,
+  "pacdemons_metrics": {
+    "mcc_extremes": {
+      "min_value": 0.15237740375460623,
+      "min_subgroup": "45-59",
+      "min_dim": "age_band",
+      "max_value": 0.6291412866707149,
+      "max_subgroup": "Kurdish",
+      "max_dim": "ethnic_origin"
+    },
+    "rec_pos_extremes": {
+      "min_value": 0.2777777777777778,
+      "min_subgroup": "Right (7-10)",
+      "min_dim": "politics",
+      "max_value": 0.6666666666666666,
+      "max_subgroup": "18-29",
+      "max_dim": "age_band"
+    },
+    "prec_pos_extremes": {
+      "min_value": 0.11538461538461539,
+      "min_subgroup": "45-59",
+      "min_dim": "age_band",
+      "max_value": 0.68,
+      "max_subgroup": "Kurdish",
+      "max_dim": "ethnic_origin"
+    },
+    "diff_extremes": {
+      "min_value": -0.005235602094240843,
+      "min_subgroup": "Kurdish",
+      "min_dim": "ethnic_origin",
+      "max_value": 0.05420054200542006,
+      "max_subgroup": "Left (0-3)",
+      "max_dim": "politics"
+    },
+    "top3_mcc": [
+      {
+        "dim": "ethnic_origin",
+        "subgroup": "Kurdish",
+        "mcc": 0.6291412866707149,
+        "n": 382
+      },
+      {
+        "dim": "age_band",
+        "subgroup": "18-29",
+        "mcc": 0.5725415924973712,
+        "n": 509
+      },
+      {
+        "dim": "age_band",
+        "subgroup": "60+",
+        "mcc": 0.5190372619527295,
+        "n": 236
+      }
+    ],
+    "bottom3_mcc": [
+      {
+        "dim": "age_band",
+        "subgroup": "45-59",
+        "mcc": 0.15237740375460623,
+        "n": 397
+      },
+      {
+        "dim": "politics",
+        "subgroup": "Right (7-10)",
+        "mcc": 0.2334877076590449,
+        "n": 484
+      },
+      {
+        "dim": "education",
+        "subgroup": "Less than high school",
+        "mcc": 0.29688852843247837,
+        "n": 636
+      }
+    ]
+  },
+  "womenwork_metrics": {
+    "wass_extremes": {
+      "min_value": 0.17911924789708075,
+      "min_subgroup": "Non-Kurdish",
+      "min_dim": "ethnic_origin",
+      "max_value": 0.3099415204678363,
+      "max_subgroup": "Left (0-3)",
+      "max_dim": "politics"
+    },
+    "kw_extremes": {
+      "min_value": 0.16287194029401372,
+      "min_subgroup": "Less than high school",
+      "min_dim": "education",
+      "max_value": 0.3573574031102136,
+      "max_subgroup": "Left (0-3)",
+      "max_dim": "politics"
+    },
+    "err_extremes": {
+      "min_value": -0.24561403508771917,
+      "min_subgroup": "Left (0-3)",
+      "min_dim": "politics",
+      "max_value": 0.2603921568627454,
+      "max_subgroup": "Rural",
+      "max_dim": "urbanization"
+    },
+    "top3_wass_smallest": [
+      {
+        "dim": "ethnic_origin",
+        "subgroup": "Non-Kurdish",
+        "wass": 0.17911924789708075,
+        "n": 2021
+      },
+      {
+        "dim": "age_band",
+        "subgroup": "30-44",
+        "wass": 0.18398768283294833,
+        "n": 866
+      },
+      {
+        "dim": "gender",
+        "subgroup": "Female",
+        "wass": 0.19352290679304898,
+        "n": 1266
+      }
+    ],
+    "bottom3_wass_largest": [
+      {
+        "dim": "politics",
+        "subgroup": "Left (0-3)",
+        "wass": 0.3099415204678363,
+        "n": 570
+      },
+      {
+        "dim": "urbanization",
+        "subgroup": "Rural",
+        "wass": 0.3027450980392158,
+        "n": 425
+      },
+      {
+        "dim": "age_band",
+        "subgroup": "60+",
+        "wass": 0.29748062015503896,
+        "n": 344
+      }
+    ],
+    "top3_positive_error": [
+      {
+        "dim": "urbanization",
+        "subgroup": "Rural",
+        "err": 0.2603921568627454,
+        "n": 425
+      },
+      {
+        "dim": "age_band",
+        "subgroup": "60+",
+        "err": 0.18895348837209314,
+        "n": 344
+      },
+      {
+        "dim": "education",
+        "subgroup": "Less than high school",
+        "err": 0.16632791327913266,
+        "n": 984
+      }
+    ],
+    "top3_negative_error": [
+      {
+        "dim": "politics",
+        "subgroup": "Left (0-3)",
+        "err": -0.24561403508771917,
+        "n": 570
+      },
+      {
+        "dim": "education",
+        "subgroup": "University or higher",
+        "err": -0.14735907678650717,
+        "n": 751
+      },
+      {
+        "dim": "education",
+        "subgroup": "High school",
+        "err": -0.06565064478311822,
+        "n": 853
+      }
+    ]
+  },
+  "regional": {
+    "pacdemons_bias_over_under_diff": {
+      "over": [
+        {
+          "region": "Western Marmara",
+          "value": 0.04
+        },
+        {
+          "region": "Aegean",
+          "value": 0.037209302325581395
+        },
+        {
+          "region": "Western Black Sea",
+          "value": 0.027777777777777776
+        }
+      ],
+      "under": [
+        {
+          "region": "Central Anatolia",
+          "value": -0.011111111111111106
+        },
+        {
+          "region": "Southeast Anatolia",
+          "value": -0.010309278350515469
+        },
+        {
+          "region": "Western Anatolia",
+          "value": 0.011904761904761904
+        }
+      ]
+    },
+    "womenwork_bias_over_under_err": {
+      "over": [
+        {
+          "region": "Eastern Black Sea",
+          "value": 0.24899598393574296
+        },
+        {
+          "region": "Northeast Anatolia",
+          "value": 0.1835748792270535
+        },
+        {
+          "region": "East-Central Anatolia",
+          "value": 0.14536340852130403
+        }
+      ],
+      "under": [
+        {
+          "region": "Aegean",
+          "value": -0.21676891615541916
+        },
+        {
+          "region": "Western Anatolia",
+          "value": -0.172979797979798
+        },
+        {
+          "region": "Western Black Sea",
+          "value": -0.06504065040650397
+        }
+      ]
+    },
+    "suppressed_pacdemons": [
+      "Northeast Anatolia"
+    ],
+    "suppressed_womenwork": []
+  },
+  "cell_counts": {
+    "gender": {
+      "pacdemons": {
+        "Female": 829,
+        "Male": 878
+      },
+      "womenwork": {
+        "Female": 1266,
+        "Male": 1322
+      }
+    },
+    "age_band": {
+      "pacdemons": {
+        "18-29": 509,
+        "30-44": 565,
+        "45-59": 397,
+        "60+": 236
+      },
+      "womenwork": {
+        "18-29": 758,
+        "30-44": 866,
+        "45-59": 620,
+        "60+": 344
+      }
+    },
+    "education": {
+      "pacdemons": {
+        "Less than high school": 636,
+        "High school": 574,
+        "University or higher": 497
+      },
+      "womenwork": {
+        "Less than high school": 984,
+        "High school": 853,
+        "University or higher": 751
+      }
+    },
+    "urbanization": {
+      "pacdemons": {
+        "Rural": 281,
+        "Intermediate": 289,
+        "Dense urban": 1137
+      },
+      "womenwork": {
+        "Rural": 425,
+        "Intermediate": 430,
+        "Dense urban": 1733
+      }
+    },
+    "ethnic_origin": {
+      "pacdemons": {
+        "Non-Kurdish": 1325,
+        "Kurdish": 382
+      },
+      "womenwork": {
+        "Non-Kurdish": 2021,
+        "Kurdish": 567
+      }
+    },
+    "politics": {
+      "pacdemons": {
+        "Left (0-3)": 369,
+        "Center (4-6)": 524,
+        "Right (7-10)": 484,
+        "Not reported": 330
+      },
+      "womenwork": {
+        "Left (0-3)": 570,
+        "Center (4-6)": 792,
+        "Right (7-10)": 722,
+        "Not reported": 504
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+outcome,n,weighted_kappa_quadratic,weighted_kappa_linear,cohen_kappa,jsd,wasserstein,prevalence_error,pred_mean,gt_mean,question
+satdem,1585,0.562,0.4223,0.2762,0.030081,0.2808,0.2808,2.1205,2.4013,Satisfaction with democracy in Turkey (1-5 Likert)
+famroles,2609,0.5302,0.3968,0.2047,0.038476,0.399,0.3254,3.2031,2.8777,"'Men earn, women home-and-family' (1-5 Likert)"
+polint,1683,0.5127,0.3682,0.2236,0.046206,0.3203,0.3119,2.1943,1.8824,Interest in politics (1-4 Likert)

@@ -1,0 +1,4 @@
+outcome,n,recall_minority,precision_minority,f1_minority,mcc,cohen_kappa,jsd,wasserstein,prevalence_error,question
+pacvolunteer,1711,0.6617,0.4548,0.5391,0.4466,0.4349,0.005869,0.0707,0.0707,Past-year: volunteering for a nonprofit or charity
+paccontact,1657,0.5693,0.444,0.4989,0.4238,0.4194,0.001786,0.0344,0.0344,Past-year: contacting a politician or official
+paccompl,1690,0.4983,0.4725,0.485,0.3738,0.3736,0.00011,0.0095,0.0095,Past-year: filing a request or complaint
