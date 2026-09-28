@@ -24,6 +24,8 @@ preferred-citation:
     - family-names: Ekmen
       given-names: Helin Yaren
   title: "Calibrating Synthetic Respondents: A Within-Persona Experiment on Public Reactions to Protest in Turkey"
-  journal: "Journal of Computational Social Science"
   year: 2026
-  doi: "TODO"                                                   # TODO
+  month: 9
+  doi: "10.31235/osf.io/hp7gz_v1"
+  url: "https://osf.io/preprints/socarxiv/hp7gz_v1"
+  notes: "SocArXiv preprint (v1). Peer-reviewed version submitted to the Journal of Computational Social Science."

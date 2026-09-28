@@ -31,6 +31,12 @@
   "communities": [],
   "related_identifiers": [
     {
+      "identifier": "10.31235/osf.io/hp7gz_v1",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    },
+    {
       "identifier": "10.5281/zenodo.18721350",
       "relation": "isDerivedFrom",
       "resource_type": "dataset",

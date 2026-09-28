@@ -6,11 +6,15 @@ M. Fuat Kına and Helin Yaren Ekmen · Institute of Population and Social
 Research, Marmara University · Submitted to *Journal of Computational
 Social Science* (Springer).
 
-> Placeholder citation:
+> Preprint citation:
 > Kına, M. F. & Ekmen, H. Y. (2026). *Calibrating Synthetic Respondents: A
 > Within-Persona Experiment on Public Reactions to Protest in Turkey.*
-> Journal of Computational Social Science, forthcoming.
-> Replication archive: Zenodo, DOI TODO.
+> SocArXiv, v1, 24 September 2026.
+> DOI: [10.31235/osf.io/hp7gz_v1](https://doi.org/10.31235/osf.io/hp7gz_v1)
+> URL: <https://osf.io/preprints/socarxiv/hp7gz_v1>
+>
+> A peer-reviewed version is under review at the *Journal of Computational
+> Social Science*. Replication archive: Zenodo DOI TBA on release.
 
 ## Summary
 
