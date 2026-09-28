@@ -35,15 +35,19 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from src.paths import CACHE_DIR as _CACHE, PERSONA_DIR as _PERSONA
+
 import pandas as pd
 from anthropic import AsyncAnthropic
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-CALIB_DIR     = Path("/Users/helinekmen/Library/Caches/digitaltwin_calibration")
+CALIB_DIR     = Path(str(_CACHE))
 SCREENING_DIR = CALIB_DIR / "screening"
-LAYER_A_DIR   = Path("/Users/helinekmen/Library/Caches/digitaltwin_layer_a")
+LAYER_A_DIR   = Path(str(_PERSONA))
 CSV_PATH      = ROOT / "data" / "tgss2024_clean.csv"
 
 OUTCOME_SPECS: dict[str, dict] = {
@@ -340,7 +344,7 @@ async def run_cell(
 
 
 async def screening_mode(client: AsyncAnthropic, args) -> None:
-    from configs.ablations import CONFIGS
+    from config.ablations import CONFIGS
 
     df = pd.read_csv(CSV_PATH, encoding="utf-8")
     df["respondent_id"] = df["id"].apply(lambda x: f"TGSS_{int(x):04d}")

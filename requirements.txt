@@ -1,7 +1,7 @@
-# Digital-twin replication package — Python 3.11
+# Digital-twin replication package — Python 3.11+
 # Pinned versions used to produce the paper's tables and figures.
 
-# Core scientific
+# --- Core scientific stack ---
 numpy==2.1.3
 pandas==2.2.3
 scipy==1.14.1
@@ -9,22 +9,28 @@ scikit-learn==1.6.1
 pyarrow==18.1.0
 openpyxl==3.1.5
 
-# Plotting
+# --- Plotting ---
 matplotlib==3.9.3
 
-# Statistical modelling
+# --- Statistical modelling ---
 statsmodels==0.14.4
 
-# Geospatial (for NUTS-1 choropleth maps)
+# --- Geospatial (NUTS-1 choropleth maps: Figs 9 and 10) ---
 geopandas==1.0.1
 shapely==2.0.6
 
-# LLM providers
+# --- LLM providers ---
 openai==1.58.1
 anthropic==0.42.0
-google-generativeai==0.8.3
+google-genai==0.4.0
 
-# Utilities
+# --- Reading TGSS .sav microdata ---
+pyreadstat==1.2.7
+
+# --- Utilities ---
 tqdm==4.67.1
 python-dotenv==1.0.1
 PyYAML==6.0.2
+
+# --- Testing ---
+pytest==7.4.4

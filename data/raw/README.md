@@ -1,27 +1,21 @@
-# TGSS 2024 microdata — retrieval instructions
+# TGSS 2024 microdata
 
-The raw TGSS 2024 microdata **is not redistributed in this repository**. It is
-covered by a separate license held by the survey producers.
+## Licence
 
-## How to obtain
+The 2024 Turkish General Social Survey (TGSS 2024) is distributed under
+**Creative Commons Attribution-NonCommercial 4.0 International** (CC BY-NC 4.0),
+the same licence used for all TGSS-derived material in this repository. See
+`../../LICENSE-DATA`.
 
-Download the SPSS file `TGSS2024.sav` from the Zenodo record:
+## Download
 
-**DOI**: [10.5281/zenodo.18721350](https://doi.org/10.5281/zenodo.18721350)
+The microdata is not committed here. Download the SPSS file from Zenodo and
+save it as `data/raw/TGSS2024.sav`:
 
-Save it here as:
+  * DOI: [10.5281/zenodo.18721350](https://doi.org/10.5281/zenodo.18721350)
+  * Cite as: Kına, M. F. (2026). *2024 Turkish General Social Survey (TGSS 2024)*
+    (v1) [Data set]. Zenodo.
 
-```
-data/raw/TGSS2024.sav
-```
-
-The first step of the pipeline (`scripts/00_prepare_data.py`) reads this file
-and produces the cleaned CSV / meta JSON already shipped under
-`data/derived/`, so if you only intend to reproduce results from the archived
-model completions you do **not** need to redownload the SPSS file — the
-derived tables suffice.
-
-## Citation
-
-If you use the TGSS 2024 microdata, please cite the original TGSS producers
-per the license terms available on the Zenodo record.
+You do NOT need this file for Path B ("Reproduce every table and figure
+from archived outputs"). The cleaned CSV under `data/derived/` is sufficient
+there.

@@ -33,6 +33,10 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from src.paths import CACHE_DIR as _CACHE, PERSONA_DIR as _PERSONA
+
 import pandas as pd
 from openai import AsyncOpenAI
 
@@ -43,10 +47,10 @@ sys.path.insert(0, str(ROOT))
 # (28K küçük dosya iCloud'da sürekli offload edilip okuma 1500ms'ye çıkıyordu).
 # outputs/layer_a symlink'i iCloud sürekli "layer_a 2" diye rename ediyor,
 # bu yüzden script direkt gerçek yolu kullanıyor.
-LAYER_A_DIR   = Path("/Users/helinekmen/Library/Caches/digitaltwin_layer_a")
+LAYER_A_DIR   = Path(str(_PERSONA))
 # outputs/calibration de iCloud-dışına taşındı: 6MB+'lik JSONL'ler
 # sürekli iCloud upload'a uğrayıp load_done_ids'i kilitliyordu.
-CALIB_DIR     = Path("/Users/helinekmen/Library/Caches/digitaltwin_calibration")
+CALIB_DIR     = Path(str(_CACHE))
 SCREENING_DIR = CALIB_DIR / "screening"
 ROBUST_DIR    = CALIB_DIR / "robustness"
 SHORTLIST_PATH = CALIB_DIR / "shortlist.json"
@@ -407,9 +411,13 @@ def parse_direct(raw: str, valid_range: tuple[int, int]) -> int | None:
     return val if lo <= val <= hi else None
 
 
-def parse_vs_cot(raw: str, valid_range: tuple[int, int], seed: int) -> int | None:
-    """Extract distribution from VS-CoT response and sample one answer."""
-    import numpy as np
+def parse_vs_cot(raw: str, valid_range: tuple[int, int], rng) -> int | None:
+    """Extract the verbalized distribution and draw one categorical sample.
+
+    Fixed protocol (paper Section 3.3): a single client-side RNG is created
+    per run at the base seed and advanced across respondents. `rng` must be a
+    numpy.random.Generator instance shared by the caller.
+    """
     m = re.search(r"DAĞILIM:\s*(\{[^}]+\})", raw, re.DOTALL)
     if not m:
         return None
@@ -423,7 +431,6 @@ def parse_vs_cot(raw: str, valid_range: tuple[int, int], seed: int) -> int | Non
         total = sum(options.values())
         keys = list(options.keys())
         probs = [options[k] / total for k in keys]
-        rng = np.random.default_rng(seed)
         return int(rng.choice(keys, p=probs))
     except Exception:
         return None
@@ -477,7 +484,11 @@ async def predict_one(
     outcome: str,
     layer_a_text: str,
     settings: dict,
+    rng=None,
 ) -> dict:
+    """Single-respondent prediction. `rng` is required for verbalized sampling
+    and must be a numpy.random.Generator shared across the whole run (created
+    once at the base seed; see run_cell / amain)."""
     spec = OUTCOME_SPECS[outcome]
     messages = build_prompt(
         layer_a_text, outcome, settings["address_mode"], settings["sampling"],
@@ -546,7 +557,7 @@ async def predict_one(
 
         # Parse
         if settings["sampling"] == "vs_cot":
-            val = parse_vs_cot(raw, spec["valid_range"], settings["seed"])
+            val = parse_vs_cot(raw, spec["valid_range"], rng)
         else:
             val = parse_direct(raw, spec["valid_range"])
 
@@ -603,8 +614,15 @@ async def run_cell(
     elapsed = time.perf_counter() - t0
     print(f"  [{config_id}/{outcome}] {len(items)} files loaded in {elapsed:.1f}s, starting API calls...")
 
+    # One numpy RNG per run, initialised with the base seed. The same instance
+    # is passed into every predict_one call; parse_vs_cot advances it across
+    # respondents. This fixes the earlier per-respondent reinit bug that
+    # collapsed VS-CoT sampling into fixed-quantile inverse-CDF sampling.
+    import numpy as np
+    rng = np.random.default_rng(settings["seed"])
+
     tasks = [
-        predict_one(client, semaphore, rid, config_id, outcome, text, settings)
+        predict_one(client, semaphore, rid, config_id, outcome, text, settings, rng)
         for rid, text in items
     ]
 
@@ -631,7 +649,7 @@ async def run_cell(
 # ---------------------------------------------------------------------------
 
 async def screening_mode(client: AsyncOpenAI, args) -> None:
-    from configs.ablations import CONFIGS
+    from config.ablations import CONFIGS
 
     df = pd.read_csv(CSV_PATH, encoding="utf-8")
     df["respondent_id"] = df["id"].apply(lambda x: f"TGSS_{int(x):04d}")

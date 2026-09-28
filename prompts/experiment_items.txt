@@ -1,0 +1,35 @@
+Experiment items — verbatim Turkish text of the two outcome questions asked
+after each vignette (paper Section 4 / Appendix H). Each item is generated
+with the outcome-specific calibrated protocol reported in Table 2.
+
+================================================================================
+dv_legitimacy — Movement legitimacy (5-point Likert)
+Protocol: C6 + verbalized sampling + T = 0.8 + GPT-5.4-mini + first-person
+          + ideological background paragraph
+================================================================================
+
+Soru:
+Tüm bunları göz önünde bulundurduğunuzda "Kürtçe anadilde eğitim eylemi
+yapan bu grup meşru bir hak mücadelesi yürütüyor." ifadesine ne ölçüde
+katılıyorsunuz?
+
+Seçenekler:
+1 = Kesinlikle katılmıyorum
+2 = Katılmıyorum
+3 = Ne katılıyorum ne katılmıyorum
+4 = Katılıyorum
+5 = Kesinlikle katılıyorum
+
+================================================================================
+dv_behavioral_intent — Behavioral intent (binary)
+Protocol: C6 + direct answering + T = 0.8 + GPT-4o-mini + first-person
+          + ideological background paragraph
+================================================================================
+
+Soru:
+Tüm bunları göz önünde bulundurduğunuzda, böyle bir yürüyüş düzenlense
+yürüyüşe bizzat katılır mıydınız?
+
+Seçenekler:
+1 = Katılırdım
+2 = Katılmazdım

@@ -24,13 +24,15 @@ from pathlib import Path
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-CSV_PATH       = ROOT / "data" / "tgss2024_clean.csv"
-EXCEL_PATH     = ROOT / "TGSS2024_Persona_Variables.xlsx"
-LABELS_PATH    = ROOT / "outputs" / "display_labels.json"
-LAYER_A_DIR    = Path("/Users/helinekmen/Library/Caches/digitaltwin_layer_a")  # iCloud-dışı
-MANIFEST_PATH  = ROOT / "outputs" / "manifests" / "layer_a_manifest.csv"
+from src.paths import PERSONA_DIR as _PERSONA
+
+CSV_PATH       = ROOT / "data" / "derived" / "tgss2024_clean.csv"
+EXCEL_PATH     = ROOT / "data" / "derived" / "TGSS2024_Persona_Variables.xlsx"
+LABELS_PATH    = ROOT / "data" / "derived" / "display_labels.json"
+LAYER_A_DIR    = _PERSONA
+MANIFEST_PATH  = ROOT / "cache" / "layer_a_manifest.csv"
 
 VALID_GROUP_PREFIXES = ("1.", "2.", "3.", "4.", "5.", "6.")
 
@@ -100,7 +102,7 @@ def load_excel() -> tuple[dict[str, str], dict[str, dict[int, str] | None]]:
     df = pd.read_excel(EXCEL_PATH, sheet_name="Variables")
 
     # Import here to avoid circular at module level
-    from configs.ablations import GROUP_ALIASES
+    from config.ablations import GROUP_ALIASES
     # Invert GROUP_ALIASES: excel_string → alias
     excel_to_alias = {v: k for k, v in GROUP_ALIASES.items()}
 
@@ -249,7 +251,7 @@ def main() -> None:
     print("Loading display labels...")
     display_labels = load_display_labels()
 
-    from configs.ablations import CONFIGS, CONFIGS_BY_ID, RUN_PRIORITY
+    from config.ablations import CONFIGS, CONFIGS_BY_ID, RUN_PRIORITY
     configs = CONFIGS
 
     if args.dry_run:

@@ -10,10 +10,14 @@ Usage:
 
 import json
 from pathlib import Path
+
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from src.paths import CACHE_DIR as _CACHE, PERSONA_DIR as _PERSONA
 import pandas as pd
 import numpy as np
 
-CALIB = Path("/Users/helinekmen/Library/Caches/digitaltwin_calibration")
+CALIB = Path(str(_CACHE))
 OUT_DIR = Path(__file__).resolve().parents[1] / "outputs"
 
 # 5 finalist'in tanımı: (label, outcome, config, model, sampling, T, primary_metric, secondary)

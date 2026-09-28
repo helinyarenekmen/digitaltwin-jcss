@@ -21,6 +21,10 @@ import argparse
 import sys
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from src.paths import CACHE_DIR as _CACHE, PERSONA_DIR as _PERSONA
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -33,7 +37,7 @@ ROOT        = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 CSV_PATH        = ROOT / "data" / "tgss2024_clean.csv"
-CALIB_DIR       = Path("/Users/helinekmen/Library/Caches/digitaltwin_calibration")
+CALIB_DIR       = Path(str(_CACHE))
 PLOTS_DIR       = ROOT / "outputs" / "plots"
 
 # ---------------------------------------------------------------------------

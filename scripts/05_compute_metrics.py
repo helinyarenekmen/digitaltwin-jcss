@@ -20,6 +20,10 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from src.paths import CACHE_DIR as _CACHE, PERSONA_DIR as _PERSONA
+
 import numpy as np
 import pandas as pd
 from scipy.spatial.distance import jensenshannon
@@ -36,7 +40,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 CSV_PATH      = ROOT / "data" / "tgss2024_clean.csv"
-CALIB_DIR     = Path("/Users/helinekmen/Library/Caches/digitaltwin_calibration")
+CALIB_DIR     = Path(str(_CACHE))
 
 # Valid response ranges per outcome (matching 04_run_calibration.py)
 OUTCOME_RANGES: dict[str, tuple[int, int]] = {
@@ -247,7 +251,7 @@ def run(variant: str = "direct", temperature: float = 0.0,
     df_gt = pd.read_csv(CSV_PATH, encoding="utf-8")
     df_gt["respondent_id"] = df_gt["id"].apply(lambda x: f"TGSS_{int(x):04d}")
 
-    from configs.ablations import CONFIGS
+    from config.ablations import CONFIGS
     config_ids = [c.config_id for c in CONFIGS]
     outcomes   = list(OUTCOME_RANGES.keys())
 

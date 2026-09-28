@@ -27,9 +27,13 @@ import re
 import sys
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from src.paths import CACHE_DIR as _CACHE, PERSONA_DIR as _PERSONA
+
 import numpy as np
 
-CALIB = Path("/Users/helinekmen/Library/Caches/digitaltwin_calibration")
+CALIB = Path(str(_CACHE))
 
 VALID_RANGES = {
     "pacdemons": (1, 2),

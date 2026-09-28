@@ -1,244 +1,212 @@
 # Calibrating Synthetic Respondents
 
-**Replication materials for**: *Calibrating Synthetic Respondents: A
-Within-Persona Experiment on Public Reactions to Protest in Turkey.*
-M. Fuat Kına and Helin Yaren Ekmen · Institute of Population and Social
-Research, Marmara University · Submitted to *Journal of Computational
-Social Science* (Springer).
+Replication materials for:
 
-> Preprint citation:
-> Kına, M. F. & Ekmen, H. Y. (2026). *Calibrating Synthetic Respondents: A
-> Within-Persona Experiment on Public Reactions to Protest in Turkey.*
-> SocArXiv, v1, 24 September 2026.
-> DOI: [10.31235/osf.io/hp7gz_v1](https://doi.org/10.31235/osf.io/hp7gz_v1)
-> URL: <https://osf.io/preprints/socarxiv/hp7gz_v1>
->
-> A peer-reviewed version is under review at the *Journal of Computational
-> Social Science*. Replication archive: Zenodo DOI TBA on release.
+> Kına, M. F. & Ekmen, H. Y. (2026). *Calibrating Synthetic Respondents:
+> A Within-Persona Experiment on Public Reactions to Protest in Turkey.*
+> SocArXiv, v1. DOI: [10.31235/osf.io/hp7gz_v1](https://doi.org/10.31235/osf.io/hp7gz_v1).
+> Peer-reviewed version submitted to the *Journal of Computational Social Science*.
 
 ## Summary
 
-We build persona-conditioned synthetic respondents from the 2024 Turkish
-General Social Survey (TGSS 2024, n = 2,615), passing 117 respondent
-variables organised into 6 thematic groups to a large language model that
-answers survey items from the respondent's point of view. We calibrate the
-inference pipeline through a four-stage funnel — configuration screening,
-sampling method × temperature, cross-model comparison, and prompt-framing
-stress tests — using two held-out outcomes (`pacdemons`, binary; `womenwork`,
-5-point Likert). We then use the calibrated pipeline for a within-persona
-experiment on Turkish public reactions to street protest under threat- vs
-opportunity-framed vignettes about the Kurdish peace process, and we
-externally validate the final protocol on six additional transfer items in
-Appendix G.
+Persona-conditioned synthetic respondents are constructed for all 2,615
+participants of the 2024 Turkish General Social Survey (TGSS 2024). A
+sequential calibration funnel selects one inference protocol per outcome
+against two held-out TGSS items — `pacdemons` (binary, rare positive) and
+`womenwork` (5-point Likert). Six transfer items (`pacvolunteer`,
+`paccontact`, `paccompl`, `famroles`, `satdem`, `polint`) are then used to
+externally validate the calibrated protocols in Appendix G. Finally, the
+calibrated protocols are applied to a within-persona synthetic experiment
+that varies the political context (threat versus opportunity) around a
+protest for Kurdish-language education in Ankara.
 
-## Repository layout
+## Data & licenses
 
-```
-.
-├── README.md                    # this file
-├── LICENSE / LICENSE-DATA       # MIT (code) · CC BY 4.0 (derived data)
-├── CITATION.cff / .zenodo.json  # citation metadata
-├── requirements.txt             # pinned Python dependencies
-├── .env.example                 # required API keys (names only)
-├── config/
-│   └── ablations.py             # 11 persona configurations (C0–C10 in the paper)
-├── prompts/                     # verbatim Turkish system prompts, VS suffix,
-│                                # ideology-background paragraph, vignettes, outcome questions
-├── src/                         # library-style helpers (personas / inference / evaluation / experiment)
-├── scripts/                     # numbered entry points (see "Reproduction" below)
-├── data/
-│   ├── raw/                     # EMPTY — put downloaded TGSS 2024 .sav here
-│   └── derived/                 # cleaned TGSS CSV, variable dictionary, geo shapefile
-├── outputs/
-│   ├── completions/             # raw LLM completions (Zenodo bundle, see README)
-│   ├── parsed/                  # long-format predictions for the experiment
-│   └── results/                 # metric tables and Appendix G transfer items
-├── figures/                     # every figure that appears in the paper (PDF + PNG)
-├── supplementary/               # not reported in the paper — additional analyses
-├── sections/                    # LaTeX manuscript fragments (for cross-referencing)
-└── tests/                       # sanity checks against paper's headline numbers
-```
+* Code — **MIT** (see `LICENSE`)
+* Derived data (persona corpora, cleaned TGSS extract, model completions,
+  metric tables) — **CC BY-NC 4.0** (see `LICENSE-DATA`).
+* TGSS 2024 microdata — the source dataset is distributed under the
+  producers' own **CC BY-NC 4.0** licence and is **not** redistributed
+  here. Download from Zenodo (Kına 2026, [10.5281/zenodo.18721350][tgss])
+  and place the .sav file at `data/raw/TGSS2024.sav`.
 
-## Data access
+[tgss]: https://doi.org/10.5281/zenodo.18721350
 
-The **TGSS 2024 microdata** must be downloaded separately — it is not
-distributed here:
+If you use TGSS-derived material from this repository, cite the TGSS 2024
+data producers **and** this replication archive.
 
-> **Zenodo DOI**: [10.5281/zenodo.18721350](https://doi.org/10.5281/zenodo.18721350)
-
-Save the SPSS file as `data/raw/TGSS2024.sav`. Detailed instructions live in
-[`data/raw/README.md`](data/raw/README.md).
-
-Derived data (cleaned CSV, variable dictionary, NUTS-1 GeoJSON) is included
-in `data/derived/` under CC BY 4.0. Persona corpora (~500 MB) are
-regenerated deterministically by `scripts/01_build_personas.py`.
-
-The **raw model completions** (~415 MB) are archived on Zenodo. See
-[`outputs/completions/README.md`](outputs/completions/README.md).
-
-## Environment setup
+## Setup
 
 ```bash
-python3.11 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-# ...then edit .env with your API keys
+# edit .env with your keys — see the model table below for which providers
 ```
 
-Four API providers are used:
+By default the pipeline reads and writes caches inside the repo:
 
-| Provider | Env variable | Used for |
-|----------|-------------|----------|
-| OpenAI | `OPENAI_API_KEY` | GPT-4o-mini (all stages), GPT-5.4-mini (Stages 3, 4) |
-| Anthropic | `ANTHROPIC_API_KEY` | Claude Haiku 4.5 (Stage 3) |
-| Google AI Studio | `GOOGLE_API_KEY` (or `GEMINI_API_KEY`) | Gemini 2.5 Flash Lite (Stage 3) |
-| OpenRouter | `OPENROUTER_API_KEY` | Llama 3.3 70B (Stage 3) |
+* Raw JSONL completions      → `./cache/calibration/`
+* Rendered persona markdown  → `./data/derived/personas/`
 
-If any variable is missing, the corresponding script falls back to a
-`getpass` prompt.
+Both can be relocated with `DT_CACHE_DIR` and `DT_PERSONA_DIR`.
 
 ## Reproduction
 
-### Path (a) — Re-run inference from scratch
+There are two reproduction paths. Path B is fast and free; Path A rerun
+every API call from scratch.
 
-**Expensive** (~US$50 in API costs, ~4 h on 8-way concurrency) and will
-produce numerically slightly different results because commercial models
-drift.
+### Path B — Reproduce every table and figure from archived outputs
 
-```bash
-python scripts/00_prepare_data.py           # TGSS .sav → cleaned CSV
-python scripts/01_build_personas.py         # persona corpora (all 27 configs)
-python scripts/02_run_inference.py --stage screening   # ~$5, 30 min
-python scripts/02_run_inference.py --stage sampling_temperature
-python scripts/02_run_inference.py --stage models       # cross-vendor
-python scripts/02_run_inference.py --stage prompt_variants
-python scripts/02_run_inference.py --stage seed_stability
-python scripts/02_run_inference.py --stage transfer_items    # Appendix G
-python scripts/05_run_experiment.py         # within-persona experiment
-python scripts/03_parse_completions.py
-python scripts/04_compute_metrics.py
-python scripts/06_experiment_analysis.py
-python scripts/07_make_tables.py
-python scripts/08_make_figures.py
-```
-
-### Path (b) — Reproduce every table and figure from archived completions
-
-**No API calls**, ~5 minutes on a laptop.
+No API calls, ~5 minutes on a laptop.
 
 ```bash
-# 1. Download the Zenodo completions bundle:
-#    (Zenodo DOI TODO → outputs/completions/)
-# 2. Regenerate personas (deterministic, no API):
-python scripts/01_build_personas.py
+# 1. Download the Zenodo completions bundle into cache/calibration/
+#    (Zenodo DOI to be added on release)
 
-# 3. Recompute metrics and tables:
-python scripts/03_parse_completions.py
-python scripts/04_compute_metrics.py
-python scripts/06_experiment_analysis.py
-python scripts/07_make_tables.py
-python scripts/08_make_figures.py
-```
+# 2. Rebuild persona corpora deterministically (no API):
+python scripts/00_prepare_data.py             # TGSS .sav → cleaned CSV
+python src/personas/01_persona_engine.py      # 2,615 respondents × 11 configs
 
-### Verification
+# 3. Regenerate tables and figures:
+python scripts/make_tables.py                 # outputs/tables/Table*.csv
+python scripts/make_figures.py                # figures/Fig*.pdf
 
-The `tests/` directory contains sanity checks against the paper's headline
-numbers. Run:
-
-```bash
+# 4. Run the verification suite:
 pytest tests/
 ```
 
-Successful output confirms the four checks below match to within ±0.005:
+### Path A — Re-run inference from scratch
 
-- Table 2 · pacdemons final protocol: **recall_minority = 0.512, JSD = 0.0011**
-- Table 2 · womenwork final protocol: **Wasserstein = 0.181, κw = 0.312**
-- Experiment · legitimacy: **Δ = −0.41, 95% CI [−0.47, −0.35], d_z = −0.26**
-- Experiment · behavioral intent: **Δ = −15.76 pp, 95% CI [−17.15, −14.36]**
+Approximately US$40 in API costs and ~4 hours on 8-way concurrency.
+Numbers will differ slightly because commercial models drift.
 
-## Table / figure → script mapping
+```bash
+python scripts/00_prepare_data.py
+python src/personas/01_persona_engine.py
+python scripts/04_run_calibration.py \
+    --configs C0,C1,C2,C3,C4,C5,C6,C7,C8,C9,C10 \
+    --outcomes pacdemons,womenwork \
+    --sampling direct --temperature 0.0
 
-| Paper | Script | Output file |
-|-------|--------|-------------|
-| Table 1 (persona configurations) | `07_make_tables.py --table 1` | `config/ablations.py` (source of truth) |
-| Table 2 (final calibration metrics) | `07_make_tables.py --table 2` | `outputs/results/pacdemons_all_phases.xlsx` sheet "All cells" · `outputs/results/womenwork_all_phases.xlsx` |
-| Table 3–4 (Stage 1 screening) | `04_compute_metrics.py --stage 1` | `outputs/results/pacdemons_all_phases.xlsx` (Phase 1 rows) |
-| Table 5–7 (Stage 2 sampling × T) | `04_compute_metrics.py --stage 2` | `outputs/results/*_all_phases.xlsx` (Phase 2–5 rows) |
-| Table 8–10 (Stage 3 cross-model) | `04_compute_metrics.py --stage 3` | `outputs/results/*_all_phases.xlsx` (Phase 7–10 rows) |
-| Table 11–13 (Stage 4 prompt) | `04_compute_metrics.py --stage 4` | `outputs/results/*_all_phases.xlsx` (Phase 15–16 rows) |
-| Table 14–15 (seed stability) | `04_compute_metrics.py --stage 5` | `outputs/results/*_all_phases.xlsx` (Phase 12 rows) |
-| **Table 16 (transfer, binary)** | `07_make_tables.py --table 16` | [`outputs/results/table_16_transfer_binary.csv`](outputs/results/table_16_transfer_binary.csv) |
-| **Table 17 (transfer, ordinal)** | `07_make_tables.py --table 17` | [`outputs/results/table_17_transfer_ordinal.csv`](outputs/results/table_17_transfer_ordinal.csv) |
-| Figure 1 (calibration funnel) | `08_make_figures.py --fig 1` | `figures/fig_calibration_funnel.pdf` (TODO — script) |
-| Figure 2 (Stage 1 JSD) | `plot_step2a_jsd.py` | `figures/calibration/fig_step2a_jsd.pdf` |
-| Figure 3 (final picks vs GT) | `plot_final_picks_vs_gt.py` | `figures/calibration/*.pdf` |
-| Figure 4 (effect summary) | `08_make_figures.py --fig 4` | [`figures/fig_effect_summary.pdf`](figures/fig_effect_summary.pdf) |
-| Figure 5 (legitimacy distribution) | `08_make_figures.py --fig 5` | [`figures/fig_legitimacy_distribution.pdf`](figures/fig_legitimacy_distribution.pdf) |
-| Figure 6 (behavioral distribution) | `08_make_figures.py --fig 6` | [`figures/fig_behavioral_distribution.pdf`](figures/fig_behavioral_distribution.pdf) |
-| Figure 7 (subgroup forest) | `08_make_figures.py --fig 7` | [`figures/fig_subgroup_forest.pdf`](figures/fig_subgroup_forest.pdf) |
-| Figure 8 (within-condition contrasts) | `08_make_figures.py --fig 8` | [`figures/fig_within_condition_forest.pdf`](figures/fig_within_condition_forest.pdf) |
-| Figure 9 (transitions heatmap) | `08_make_figures.py --fig 9` | [`figures/fig_within_persona_transitions.pdf`](figures/fig_within_persona_transitions.pdf) |
-| Figure 10 (NUTS-1 map) | `08_make_figures.py --fig 10` | [`figures/fig_regional_legitimacy_map.pdf`](figures/fig_regional_legitimacy_map.pdf) · [`figures/fig_regional_behavioral_map.pdf`](figures/fig_regional_behavioral_map.pdf) |
+# Then Stages 2-5 per the paper's funnel (each takes ~30-60 min):
+python scripts/04_run_calibration.py --sampling vs_cot --temperature 0.4
+python scripts/09_run_calibration_gemini.py    # Stage 3 (Gemini)
+python scripts/10_run_calibration_openrouter.py --model llama-3.3-70b   # Stage 3 (Llama)
+python scripts/04_run_calibration.py --political_context ...            # Stage 4 (ideology paragraph)
+python scripts/04_run_calibration.py --seed 1  # seed stability
+python scripts/04_run_calibration.py --seed 2
 
-**TODO — cross-reference these mappings against the final manuscript once the
-JCSS version is fixed. Placeholder script `07_make_tables.py` and figure
-dispatchers `08_make_figures.py` still need to be written; the underlying
-CSVs and per-figure scripts already exist. Some renumbering may be needed
-once JCSS sends galley proofs.**
+# Section 4 experiment:
+python scripts/run_context_experiment_v2.py --peace v3_final_noPC --no-pc
+
+# Aggregate + figures:
+python scripts/05_compute_metrics.py
+python scripts/07_resample_vs_cot.py           # apply RNG correction (see docs/sampling_correction.md)
+python scripts/make_tables.py
+python scripts/make_figures.py
+```
+
+## Configurations — paper labels vs internal ids
+
+The paper uses contiguous labels **C0-C10** (Table 4, Appendix B). The
+internal id used in archived JSONL filenames is one step out at C2 because
+the historical numbering skipped C2:
+
+| Paper id | Internal id (`legacy_id`) |
+|----------|---------------------------|
+| C0-C1    | C0-C1 |
+| C2       | C3 |
+| C3       | C4 |
+| C4       | C5 |
+| C5       | C6 |
+| **C6**   | **C7** (the paper's calibrated protocol config) |
+| C7       | C8 |
+| C8       | C9 |
+| C9       | C10 |
+| C10      | C11 |
+
+`config/ablations.py` encodes both ids on every entry, and `config/config_id_mapping.csv`
+is a human-readable dump of the mapping. Every user-facing artefact (Excel
+`Config` column, table CSVs, figure captions) uses **paper labels**.
+
+## Paper table & figure ↔ script mapping
+
+| Paper | Script | Output |
+|-------|--------|--------|
+| Table 1 | `make_tables.py --table 1` | `outputs/tables/Table1_cross_model.csv` |
+| Table 2 | `make_tables.py --table 2` | `outputs/tables/Table2_final_protocols.csv` |
+| Table 3 | `make_tables.py --table 3` | `outputs/tables/Table3_persona_variables.csv` |
+| Table 4 | `make_tables.py --table 4` | `outputs/tables/Table4_persona_configurations.csv` |
+| Tables 5-6 (Stage 1) | `make_tables.py --table 5` | `outputs/tables/Table5_stage1_*.csv` |
+| Tables 7-9 (Stage 2) | `make_tables.py --table 7` | `outputs/tables/Table7-9_stage2_*.csv` |
+| Tables 10-11 (Stage 3) | `make_tables.py --table 10` | `outputs/tables/Table10-11_stage3_*.csv` |
+| Tables 12-13 (Stage 4) | `make_tables.py --table 12` | `outputs/tables/Table12-13_stage4_*.csv` |
+| Tables 14 (seed stability) | `make_tables.py --table 14` | `outputs/tables/Table14_stage5_*.csv` |
+| **Table 15** (seed-pair agreement) | `make_tables.py --table 15` | `outputs/tables/Table15_seed_pair_agreement.csv` |
+| Table 16 (Appendix G, binary) | `make_tables.py --table 16` | `outputs/tables/Table16_transfer_binary.csv` |
+| Table 17 (Appendix G, ordinal) | `make_tables.py --table 17` | `outputs/tables/Table17_transfer_ordinal.csv` |
+| Fig 1 (calibration funnel) | `make_figures.py --fig 1` | `figures/Fig01_calibration_funnel.pdf` |
+| Fig 2 (effect summary) | `make_figures.py --fig 2` | `figures/Fig02_effect_summary.pdf` |
+| Fig 3 (between-group forest) | `make_figures.py --fig 3` | `figures/Fig03_between_group_forest.pdf` |
+| Fig 4 (subgroup context-effect forest) | `make_figures.py --fig 4` | `figures/Fig04_subgroup_context_forest.pdf` |
+| Figs 5-6 (distributions) | `make_figures.py --fig 5` | `figures/Fig05_legitimacy_distribution.pdf`, `Fig06_behavioral_distribution.pdf` |
+| Figs 7-8 (subgroup interactions) | `make_figures.py --fig 7` | `figures/Fig07_subgroup_interaction_behavioral.pdf`, `Fig08_subgroup_interaction_legitimacy.pdf` |
+| Figs 9-10 (NUTS-1 maps) | `make_figures.py --fig 9` | `figures/Fig09_regional_legitimacy_map.pdf`, `Fig10_regional_behavioral_map.pdf` |
 
 ## Model table
 
-| Provider | Model identifier / snapshot | Access dates | Temperature | top_p | max_tokens (direct / VS-CoT / CoT) | Seeds used |
-|----------|-----------------------------|--------------|------------:|------:|------------------------------------|------------|
-| OpenAI | `gpt-4o-mini` | 2026-05 → 2026-08 (TODO exact) | 0.0, 0.4, 0.8 | 1.0 (default) | 10 / 250 / 200 | {0, 1, 2} |
-| OpenAI | `gpt-5.4-mini` | 2026-06 → 2026-08 (TODO) | 0.8 | 1.0 | via `max_completion_tokens` | {0, 1, 2} |
-| OpenAI | `gpt-5-mini` | 2026-07 (TODO) | 0.8 | 1.0 | 400 (VS-CoT + CoT) | {0} |
-| Anthropic | `claude-haiku-4-5-20251001` | 2026-07 → 2026-08 (TODO) | 0.8 | 1.0 | 250 (VS-CoT) | {0} |
-| Google AI Studio | `gemini-2.5-flash-lite` | 2026-06 → 2026-08 (TODO) | 0.0, 0.4, 0.8 | 1.0 | 250 (VS-CoT) | {0, 1, 2} |
-| OpenRouter → Meta | `meta-llama/llama-3.3-70b-instruct` | 2026-07 (TODO) | 0.8 | 1.0 | 250 (VS-CoT) | {0, 1, 2} |
+| Provider | Model identifier | Access dates | Temperature | top_p | max_tokens (direct / VS-CoT / +CoT) | Seeds |
+|----------|------------------|--------------|-------------|-------|-------------------------------------|-------|
+| OpenAI | `gpt-4o-mini` | 2026-05 → 2026-08 | 0.0, 0.4, 0.8 | 1.0 (default) | 10 / 250 / 200 | 0, 1, 2 |
+| OpenAI | `gpt-5.4-mini` | 2026-06 → 2026-08 | 0.8 | 1.0 | 250 (VS-CoT) | 0, 1, 2 |
+| Anthropic | `claude-haiku-4-5-20251001` | 2026-07 → 2026-08 | 0.8 | 1.0 | 250 (VS-CoT) | 0 |
+| Google | `gemini-2.5-flash-lite` | 2026-06 → 2026-08 | 0.0, 0.4, 0.8 | 1.0 | 250 (VS-CoT) | 0, 1, 2 |
+| OpenRouter → Meta | `meta-llama/llama-3.3-70b-instruct` | 2026-07 | 0.8 | 1.0 | 250 (VS-CoT) | 0, 1, 2 |
 
-`top_p` was never explicitly set; provider defaults (`1.0`) apply. **TODO —
-Kına/Ekmen: replace access-date placeholders with actual date ranges from
-your API dashboards.**
+`top_p` is provider default (`1.0`) throughout. Access dates are the range
+across which cells for a given model were populated in the JSONL cache;
+Kına/Ekmen (authors) can replace them with more precise dates from the API
+dashboards.
 
 ## Seed handling
 
-- **Direct answering** (Stages 1, 3, most of 4): the seed is passed to the
-  provider's `seed` argument when `temperature = 0`. For `T > 0`, the seed
-  argument has no effect (commercial API behavior) — replication under
-  T > 0 is therefore only within-drift.
-- **Verbalized sampling with chain-of-thought** (VS-CoT): the model returns
-  a probability distribution over answer categories. A **client-side**
-  numpy RNG (`np.random.default_rng(base_seed)`) draws the categorical
-  sample from that distribution. Under the base protocol the RNG is
-  reinitialised once per base seed and consumed sequentially across
-  respondents; `07_resample_vs_cot.py` post-hoc corrects an earlier bug
-  where the RNG was reinitialised per respondent (see Known deviations).
-- **Experiment seeds**: fixed per respondent-condition pair via the same
-  API-side seed argument when `T = 0`, or via a client-side hash of
-  `(respondent_id, condition, base_seed)` when `T > 0`.
+* **Direct answering** (Stages 1, 3, most of 4). At `T=0` the seed is
+  passed to the provider `seed` field so responses are reproducible.
+  At `T>0` the provider seed has no effect and replication is only within
+  drift.
+* **Verbalized sampling with chain-of-thought** (VS-CoT). The model
+  returns a probability distribution over answer categories. A single
+  `numpy.random.Generator` is initialised at the base seed for the run
+  and advanced across respondents (see `docs/sampling_correction.md`).
+* **Section 4 experiment**. `run_context_experiment_v2.py` fixes a
+  per-(respondent, condition) draw seed via a hash so that the same pair
+  is reproducible across reruns even at `T>0`.
 
 ## Known deviations
 
-- **Llama-3.3-70B C3 cell is incomplete** (1,783 of 2,588 respondents).
-  Downstream aggregations for this cell subset accordingly.
-- **VS-CoT client-side RNG bug fix**: in the initial screening runs the
-  numpy RNG was reinitialised per respondent (rather than once per base
-  seed), which inflated per-respondent stability metrics. All final metrics
-  are computed from the corrected reprocessing performed in
-  `07_resample_vs_cot.py`, which does *not* require additional API calls.
-  See `outputs/results/methodology_note.md`.
-- **Invalid completions are dropped, not imputed**: parse failures (rare,
-  <1%) and API errors are excluded from metric computations. Sample-size
-  columns in the results tables reflect this filter.
-- **Paper labels "C6" == internal "C7"**: the paper renumbers the eleven
-  ablations contiguously (C0–C10) for readability; the internal registry
-  (`config/ablations.py`) preserves the historical numbering that skips
-  C2. Concretely: paper C6 ↔ internal C7 (= "all persona groups except
-  Social-Psychological").
+* The Llama 3.3 70B run at paper config C2 is incomplete (1,783 of 2,588
+  respondents in the archived cache).
+* Invalid completions are dropped, not imputed. Sample-size columns
+  reflect the filter.
+* Stage 3 and Stage 4 VS-CoT metric CSVs are the corrected output of
+  `07_resample_vs_cot.py`. See `docs/sampling_correction.md`.
+
+## How to cite
+
+```
+@article{kina_ekmen_2026,
+  author  = {Kına, M. Fuat and Ekmen, Helin Yaren},
+  title   = {Calibrating Synthetic Respondents: A Within-Persona Experiment
+             on Public Reactions to Protest in Turkey},
+  year    = {2026},
+  month   = {9},
+  journal = {SocArXiv},
+  doi     = {10.31235/osf.io/hp7gz_v1},
+  url     = {https://osf.io/preprints/socarxiv/hp7gz_v1}
+}
+```
 
 ## Contact
 
-For replication questions: Helin Yaren Ekmen &lt;helinyarenekmen@gmail.com&gt;.
-For substantive questions: TODO co-author contact.
+Helin Yaren Ekmen — <helinyarenekmen@gmail.com>

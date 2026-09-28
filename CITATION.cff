@@ -5,17 +5,17 @@ authors:
   - family-names: Kına
     given-names: M. Fuat
     affiliation: "Institute of Population and Social Research, Marmara University"
-    orcid: "TODO"                          # TODO: fill in your ORCID
+    orcid: "TODO"
   - family-names: Ekmen
     given-names: Helin Yaren
     affiliation: "Institute of Population and Social Research, Marmara University"
-    orcid: "TODO"                          # TODO: fill in your ORCID
+    orcid: "TODO"
 type: software
 license: MIT
-repository-code: "https://github.com/TODO/digitaltwin-jcss"    # TODO
-url: "https://github.com/TODO/digitaltwin-jcss"                 # TODO
+repository-code: "https://github.com/helinyarenekmen/digitaltwin-jcss"
+url: "https://github.com/helinyarenekmen/digitaltwin-jcss"
 version: "1.0.0"
-date-released: 2026-XX-XX                                       # TODO
+date-released: 2026-09-28
 preferred-citation:
   type: article
   authors:

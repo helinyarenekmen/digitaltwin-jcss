@@ -44,3 +44,8 @@ data/derived/personas/*
 # Scratch / temp
 scratch/
 tmp/
+
+# New paths introduced by src.paths (env-var overridable)
+cache/
+zenodo_bundle/
+outputs/tables/

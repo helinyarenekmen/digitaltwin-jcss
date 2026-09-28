@@ -1,6 +1,6 @@
 {
   "title": "Replication materials for: Calibrating Synthetic Respondents — A Within-Persona Experiment on Public Reactions to Protest in Turkey",
-  "description": "Code, prompts, configuration, aggregated results, and figures for the paper. Persona corpora and raw model completions are archived separately in the Zenodo record and, in the case of TGSS 2024 microdata, obtained from Zenodo DOI 10.5281/zenodo.18721350 (not redistributed here).",
+  "description": "Code, prompts, configuration, aggregated results, and figures for the paper. Persona corpora and raw model completions are archived separately in the Zenodo record. TGSS 2024 microdata is obtained from Zenodo DOI 10.5281/zenodo.18721350 under CC BY-NC 4.0 and is not redistributed here.",
   "creators": [
     {
       "name": "Kına, M. Fuat",
@@ -18,17 +18,15 @@
     "digital twins",
     "large language models",
     "survey simulation",
+    "survey experiment",
     "TGSS",
     "Turkey",
-    "protest",
-    "framing experiment",
     "verbalized sampling",
     "calibration"
   ],
   "license": "MIT",
   "upload_type": "software",
   "access_right": "open",
-  "communities": [],
   "related_identifiers": [
     {
       "identifier": "10.31235/osf.io/hp7gz_v1",

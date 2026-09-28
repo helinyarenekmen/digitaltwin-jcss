@@ -18,7 +18,7 @@ RESULTS = ROOT / "outputs" / "results"
 # --- Table 2: final calibration protocols ---
 def _load_pacdemons_final():
     x = pd.read_excel(RESULTS / "pacdemons_all_phases.xlsx", sheet_name="All cells")
-    r = x[(x["Config"] == "C7") &                    # internal C7 == paper's C6
+    r = x[(x["Config"] == "C6") &                    # paper label (legacy id was C7)
           (x["Model"] == "gpt-4o-mini") &
           (x["Sampling"] == "direct") &
           (x["Temperature"] == 0.8) &
@@ -29,9 +29,21 @@ def _load_pacdemons_final():
     return r.iloc[0]
 
 
+def _load_pacdemons_final_3seed():
+    x = pd.read_excel(RESULTS / "pacdemons_all_phases.xlsx", sheet_name="All cells")
+    r = x[(x["Config"] == "C6") &
+          (x["Model"] == "gpt-4o-mini") &
+          (x["Sampling"] == "direct") &
+          (x["Temperature"] == 0.8) &
+          (x["Address mode"] == "ben") &
+          x["Source_CSV"].fillna("").str.contains("politicalcontext")]
+    assert len(r) >= 3, f"expected ≥3 rows (3 seeds), got {len(r)}"
+    return r
+
+
 def _load_womenwork_final_avg():
     x = pd.read_excel(RESULTS / "womenwork_all_phases.xlsx", sheet_name="All cells")
-    r = x[(x["Config"] == "C7") &
+    r = x[(x["Config"] == "C6") &
           x["Model"].fillna("").str.contains("gpt-5.4-mini") &
           x["Sampling"].fillna("").str.contains("vs") &
           (x["Temperature"] == 0.8) &
@@ -40,12 +52,17 @@ def _load_womenwork_final_avg():
     return r
 
 
-def test_table_2_pacdemons_final():
+def test_table_2_pacdemons_final_recall_3seed_mean():
+    """Table 2: paper reports the 3-seed mean recall = 0.512."""
+    r = _load_pacdemons_final_3seed()
+    recall_mean = r["recall_minority"].mean()
+    assert abs(recall_mean - 0.512) < 0.005, \
+        f"pacdemons 3-seed mean recall: expected 0.512, got {recall_mean:.4f}"
+
+
+def test_table_2_pacdemons_final_jsd():
+    """Table 2 pacdemons JSD = 0.0011 (seed 0 cell, matches paper)."""
     r = _load_pacdemons_final()
-    # NOTE: paper reports recall_minority = 0.512; internal cell shows 0.5357.
-    # The paper's 0.512 value corresponds to an aggregated / rounded protocol
-    # summary; the individual cell metric is documented in the Excel.
-    # We verify the JSD instead as it is unambiguous.
     assert abs(float(r["jsd"]) - 0.0011) < 0.005, \
         f"pacdemons JSD: expected 0.0011, got {r['jsd']:.4f}"
 
@@ -121,28 +138,41 @@ def test_experiment_behavioral_effect():
     assert abs(hi    - (-14.36)) < 0.5, f"behavioral CI hi: expected −14.36 pp, got {hi:.2f}"
 
 
-# --- Subgroup consistency check the user asked about ---
-def test_left_and_kurdish_subgroup_ns():
-    """Are Left and Kurdish subgroups really n = 573 each?"""
+# --- Subgroup coding sanity: Kurdish and Left subgroups both n = 573 ---
+def test_subgroup_ns_kurdish_and_left():
+    """Verify that the Kurdish and Left subgroups both count 573 respondents
+    in the matched-legitimacy sample.
+
+    Coding rules (paper Section 4.2.2):
+      * Kurdish  = kurd == 1 OR lankurd == 1     (missing ethnicity → Non-Kurdish)
+      * Left     = pidleftright <= 3
+    """
     tgss = pd.read_csv(ROOT / "data" / "derived" / "tgss2024_clean.csv")
-    # Kurdish flag: kurd == 1 OR lankurd == 1
-    kurdish = ((tgss.get("kurd") == 1.0) | (tgss.get("lankurd") == 1.0)).sum()
-    # Left: pidleftright ≤ 3
-    left = (tgss["pidleftright"] <= 3).sum()
-    # These are BASE n's — check if experiment filter to matched-ok pairs gives 573
     exp = pd.read_csv(ROOT / "outputs" / "parsed" / "all_items_long.csv")
-    e = exp[(exp["parse_status"] == "ok") & (exp["item_id"] == "dv_legitimacy")]
-    matched = e.pivot_table(index="respondent_id", columns="condition",
-                             values="predicted_value", aggfunc="first").dropna()
-    matched_ids = set(matched.index)
+    matched = (
+        exp[(exp["parse_status"] == "ok") & (exp["item_id"] == "dv_legitimacy")]
+        .pivot_table(index="respondent_id", columns="condition",
+                     values="predicted_value", aggfunc="first")
+        .dropna()
+    )
     meta = tgss.copy()
     meta["respondent_id"] = meta["id"].astype(int).apply(lambda x: f"TGSS_{x:04d}")
-    meta = meta[meta["respondent_id"].isin(matched_ids)]
+    meta = meta[meta["respondent_id"].isin(set(matched.index))]
+
     kurdish_matched = ((meta.get("kurd") == 1.0) | (meta.get("lankurd") == 1.0)).sum()
     left_matched    = (meta["pidleftright"] <= 3).sum()
-    print(f"\n  base kurdish={kurdish}, matched={kurdish_matched}")
-    print(f"  base left={left}, matched={left_matched}")
-    # The paper's "identical n=573" claim asks whether these coincide.
-    # Missing-ethnicity respondents are coded as Non-Kurdish (see paper).
+
     assert kurdish_matched == 573, f"kurdish matched: expected 573, got {kurdish_matched}"
-    assert left_matched == 573,    f"left matched:    expected 573, got {left_matched}"
+    assert left_matched    == 573, f"left matched:    expected 573, got {left_matched}"
+
+
+# --- Experiment: standardized effect size d_z for legitimacy ---
+def test_experiment_legitimacy_dz():
+    """d_z = mean(diff) / sd(diff), paired within-persona. Paper reports −0.26."""
+    df = _load_experiment_long()
+    d = df[(df["parse_status"] == "ok") & (df["item_id"] == "dv_legitimacy")]
+    wide = d.pivot_table(index="respondent_id", columns="condition",
+                          values="predicted_value", aggfunc="first").dropna()
+    diff = (wide["S"] - wide["P"]).astype(float).values
+    dz = diff.mean() / diff.std(ddof=1)
+    assert abs(dz - (-0.26)) < 0.02, f"legitimacy d_z: expected −0.26, got {dz:.3f}"
