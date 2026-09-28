@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software or the accompanying data, please cite both the paper and this replication archive."
+title: "Replication materials for: Calibrating Synthetic Respondents — A Within-Persona Experiment on Public Reactions to Protest in Turkey"
+authors:
+  - family-names: Kına
+    given-names: M. Fuat
+    affiliation: "Institute of Population and Social Research, Marmara University"
+    orcid: "TODO"                          # TODO: fill in your ORCID
+  - family-names: Ekmen
+    given-names: Helin Yaren
+    affiliation: "Institute of Population and Social Research, Marmara University"
+    orcid: "TODO"                          # TODO: fill in your ORCID
+type: software
+license: MIT
+repository-code: "https://github.com/TODO/digitaltwin-jcss"    # TODO
+url: "https://github.com/TODO/digitaltwin-jcss"                 # TODO
+version: "1.0.0"
+date-released: 2026-XX-XX                                       # TODO
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Kına
+      given-names: M. Fuat
+    - family-names: Ekmen
+      given-names: Helin Yaren
+  title: "Calibrating Synthetic Respondents: A Within-Persona Experiment on Public Reactions to Protest in Turkey"
+  journal: "Journal of Computational Social Science"
+  year: 2026
+  doi: "TODO"                                                   # TODO
