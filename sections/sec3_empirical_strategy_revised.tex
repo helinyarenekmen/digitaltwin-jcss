@@ -1,0 +1,366 @@
+% ---------------------------------------------------------------------------
+% §3 EMPIRICAL STRATEGY — paste-ready revize.
+% Yapı (Fuat feedback s.8): Empirical Strategy üst başlık; girişte iki aşama
+% + yol haritası; sonra Data, Calibration Outcomes, Persona Construction,
+% Calibration Procedure, Experimental Design.
+% TODO'lar: (1) \citep{zhang2025verbalized} için bib girdisi ekle
+% (Verbalized Sampling makalesi). (2) \ref{sec:results} etiketini kendi
+% Results section etiketinle değiştir. (3) Distributional-alignment gerekçe
+% cümlelerine Fuat'ın referanslı metni gelecek (kendisinden alınacak).
+% ---------------------------------------------------------------------------
+
+\section{Empirical Strategy}
+\label{sec:empirical-strategy}
+
+This study proceeds in two stages. The first stage calibrates and selects
+the inference protocol used to generate survey responses from persona-based
+synthetic agents, which we refer to as digital twins. We use two held-out
+TGSS outcomes as ground truth and vary persona content, sampling strategy,
+temperature, address mode, model, and prompt framing. Each setup is
+evaluated at both the distributional and respondent levels. The aim is to
+identify the protocol that most closely reproduces observed survey
+responses before applying it in the experimental stage.
+
+The second stage applies the calibrated inference protocols in a survey
+experiment conducted on the synthetic population. Each digital twin is
+exposed, in independent prompt turns, to two versions of the same protest
+event that differ only in the surrounding political structure: a threat
+condition, set against an active cross-border military operation, and an
+opportunity condition, set during an ongoing negotiation process. This
+within-persona design allows us to compare responses from the same
+synthetic respondent across the two conditions. Treatment effects are
+evaluated as aggregate distributional shifts, consistent with the primary
+calibration target established in the first stage.
+
+The remainder of this section introduces the data, the calibration outcomes
+and their evaluation metrics, the construction of the personas, the
+calibration procedure, and the experimental design, in that order.
+
+\subsection{Data}
+\label{sec:data}
+
+This study draws on the 2024 Turkish General Social Survey (TGSS 2024), a
+nationally representative face-to-face survey of 2,615 adults conducted
+across Turkey's twelve NUTS-1 regions \citep{nisanci_tgss_2025}. The TGSS
+covers demographic characteristics, socioeconomic position, political
+attitudes and behavior, social trust and networks, religiosity, well-being,
+media consumption, and civic participation. This breadth of
+individual-level information makes the survey especially suitable for
+persona-based simulation, since it allows us to construct respondent
+profiles that go beyond basic demographics and incorporate social,
+political, and attitudinal characteristics.
+
+\subsection{Calibration Outcomes and Evaluation}
+\label{sec:outcomes}
+
+The calibration outcomes are selected to differ in response structure while
+remaining substantively connected to the downstream experiment.
+\textit{Pacdemons} (\textit{n} = 1,707) is a rare binary measure of
+participation in street demonstrations during the previous twelve months,
+with affirmative responses accounting for approximately five percent of
+valid cases.\footnote{The TGSS uses a rotating question design, so
+\textit{pacdemons} was administered to a subset of respondents (\textit{n} =
+1,707) rather than to the full sample.} \textit{Womenwork} is a five-point
+Likert item measuring agreement with the statement that family life suffers
+when a woman works full time (\textit{n} = 2,588). Together, these outcomes
+test whether the optimal inference setup remains stable across response
+formats or requires adaptation to the measurement structure of the target
+outcome.
+
+The two outcomes also capture dimensions relevant to the downstream
+experiment on protest for Kurdish-language education. Protest participation
+measures the respondent's prior relationship to collective action, while
+attitudes toward women's full-time work capture responses to a contested
+question of social equality and social change. Both outcomes are excluded
+from persona construction at every stage. Agents therefore never receive
+the answers they are later asked to reproduce, and evaluation compares each
+simulated response with the respondent's withheld survey response.
+
+The primary calibration target is distributional alignment because the
+downstream experiment compares aggregate response distributions across
+treatment conditions. We therefore use metrics tailored to the measurement
+scale of each outcome. For the binary protest-participation outcome, we
+report Jensen--Shannon divergence (JSD) and the raw prevalence difference,
+$\Delta p$. JSD measures overall dissimilarity between the observed and
+simulated response distributions, while $\Delta p$ captures the direction
+and magnitude of bias in positive-class prevalence
+\citep{lin1991,bisbee2024}. For the five-point Likert outcome, we use the
+Wasserstein-1 distance because it respects the ordered structure of the
+response categories and penalizes discrepancies in proportion to the
+distance between categories \citep{rubner2000}. We additionally report JSD
+and comparisons of item-level means and standard deviations as descriptive
+diagnostics, since recent research on synthetic survey respondents
+documents underdispersion and variance compression in LLM-generated
+responses \citep{bisbee2024,toubia2025}.
+
+Because the synthetic population is generated at the respondent level
+before responses are aggregated, we evaluate calibration performance at
+both the aggregate and respondent levels. For \textit{pacdemons},
+respondent-level performance is assessed using the Matthews correlation
+coefficient, macro-F1, protest-positive recall (recall on the rare
+affirmative class), and Cohen's kappa
+\citep{cohen1960,matthews1975,powers2011}. For \textit{womenwork}, we
+report Cohen's kappa and quadratic weighted kappa. Quadratic weighted kappa
+is appropriate for this outcome because it distinguishes adjacent-category
+errors from larger ordinal discrepancies on the five-point scale
+\citep{cohen1968}. Final protocol selection considers distributional fit
+and respondent-level agreement jointly. The selected protocol is therefore
+the one that provides the strongest overall performance across both
+dimensions.
+
+\subsection{Persona Construction}
+\label{sec:persona-construction}
+
+The first decision in building a digital twin is how much of a respondent
+to encode. A persona may include only basic demographics or a richer
+profile spanning beliefs, economic position, social values, and political
+attitudes. Because more information is not necessarily better, overlong
+profiles may dilute task-relevant information or encourage reliance on
+broad attribute associations. We therefore treat persona detail as one
+dimension of the calibration design.
+
+We begin from a curated set of roughly 117 TGSS variables, organized into
+six thematic groups, namely demographics, belief and ideology, economic
+position and attitudes, social values and attitudes, social-psychological
+dispositions, and political values and attitudes.\footnote{The full list of
+variables is reported in Appendix~\ref{app:variables}.}
+
+Each variable is converted into a short natural-language line that pairs a
+compact label with the respondent's value. Labels are generated once by
+shortening each survey question into a two-to-four word form, then fixed
+and reused for all respondents. Variables appear under group headings in a
+fixed order, from demographics to political values and attitudes. The
+result is a structured respondent profile built deterministically from the
+survey record, with no generation step before inference.
+
+We use a structured format as the baseline representation of each persona
+rather than automatically converting survey records into continuous prose.
+This format preserves every included variable, maintains a consistent
+ordering across respondents, and avoids introducing uncontrolled variation
+during persona construction. It therefore provides a standardized starting
+point for evaluating differences across inference settings. As part of the
+calibration procedure, we also test whether rewriting the shortlisted
+personas into natural-language profiles improves performance relative to
+this structured baseline.
+
+The design produces eleven persona-content configurations, labeled C0
+through C10, which specify how much of the respondent's survey record
+enters the prompt. C0 is the demographic-only baseline, C1 is the full
+profile, and C2 through C10 add or remove different combinations of
+ideological, social, economic, psychological, and political information. By
+varying these blocks, we test which forms of respondent information improve
+calibration performance.\footnote{The exact composition of each
+configuration is reported in Appendix~\ref{app:configs}, and
+Appendix~\ref{app:persona-example} provides an anonymized example of a
+persona profile used in the calibrated \textit{womenwork} protocol,
+together with the full prompt in which it is embedded.} Applied to the full
+TGSS sample, the design yields $2{,}615 \times 11 = 28{,}765$ distinct
+persona profiles.
+
+\subsection{Calibration Procedure}
+\label{sec:calibration-procedure}
+
+Having fixed how personas are built, we calibrate the inference setup that
+converts each persona into a survey answer. We conduct this search
+separately for the two calibration outcomes. The full grid of persona
+configuration, sampling strategy, temperature, address mode, model, and
+prompt presentation spans roughly 2,600 cells per outcome, and evaluating
+every cell on the full sample would require more than eleven million model
+completions before any multi-seed replication --- well beyond a defensible
+computational budget. We therefore use a sequential funnel
+(Figure~\ref{fig:calibration-funnel}), in which each step narrows the
+candidate set by varying one component of the setup while holding the
+remaining components fixed. The order follows the structure of the problem:
+we begin with persona content, then vary inference behavior, model family,
+and prompt presentation.\footnote{Full cell-level results and
+implementation details are reported in
+Appendix~\ref{app:calibration-results}.}
+
+We first hold the inference setup fixed at direct answering, temperature
+zero, first-person address, and GPT-4o-mini, then screen the eleven persona
+configurations across both outcomes. This step isolates the effect of
+persona content and reduces the full set of configurations to a smaller
+candidate set for subsequent tests.
+
+On the shortlisted configurations, we compare direct answering with
+verbalized sampling across three temperatures, $T \in \{0, 0.4, 0.8\}$.
+Direct answering records the model's selected option. Verbalized sampling
+asks the model to produce a probability distribution over the valid
+response options, from which we draw one response using a fixed
+respondent-level seed \citep{zhang2025verbalized}. % TODO: bib girdisi ekle
+Sampling strategy and temperature are varied jointly because both govern
+the same stochastic layer of the setup: temperature shapes the variability
+of what the model generates, while the sampling strategy determines whether
+that variability is expressed as a single selected option or as an explicit
+probability distribution. This design separates probabilistic answer
+generation from the final sampled response and allows us to test whether
+deterministic or probabilistic answering better recovers each
+outcome.\footnote{The parsing procedure and example prompt are reported in
+Appendix~\ref{app:verbalized-prompt}; stochastic seed construction is
+reported in Appendix~\ref{app:stability}.}
+
+We then re-run the leading per-outcome setups on three additional models
+from different providers: GPT-5.4-mini (OpenAI), Gemini 2.5 Flash Lite
+(Google), and Llama 3.3 70B (Meta). This step assesses whether the main
+calibration patterns are specific to one model implementation or persist
+across alternative model families. The four backbones are chosen because
+they are among the most widely used commercial and open-weight model
+families in applied synthetic-survey work, spanning three providers; this
+anchors the robustness check in the models practitioners actually deploy
+rather than in an exhaustive sweep of the model space.
+
+Finally, we test whether the selected protocols are robust to plausible
+changes in how the persona and the survey prompt are presented, holding the
+underlying respondent information fixed. Four variants are considered:
+switching the grammatical address of the prompt from first to second
+person, inserting an instruction to reason briefly before selecting an
+answer, prepending a short background paragraph describing the structure of
+political ideology in Turkey,\footnote{The full Turkish text of the
+background paragraph is reproduced in Appendix~\ref{app:background}.} and
+rewriting the structured persona profile as a natural-language biography
+that preserves every recorded fact while adding none.\footnote{The
+rewriting procedure and full results of this ablation are reported in
+Appendix~\ref{app:natural}.} Each variant is a choice a practitioner could
+defensibly make when designing the simulation. If simulated responses
+shifted under these variants, calibration results would rest on arbitrary
+presentation decisions rather than on persona content; the first three
+tests confirm that they do not, while the fourth shows that the
+\emph{format} of the persona is not arbitrary at all: aggregate
+distributional fit survives the biographical rewrite, but respondent-level
+agreement degrades sharply, which is why the structured format is retained.
+
+At the end of the funnel, we select one calibrated inference setup for each
+outcome. These setups are fixed before the downstream survey experiment, so
+experimental results cannot influence the choice of persona configuration,
+sampling strategy, model, temperature, or prompt presentation. After
+protocol selection, we assess stochastic stability across random seeds as a
+robustness check.\footnote{Details are reported in
+Appendix~\ref{app:stability}.} The results of the calibration funnel and
+the selected protocols are reported in the next section.
+
+% Figür bölümün SONUNA taşındı (Fuat feedback s.10): okuyucu tüm kavramları
+% tanıdıktan sonra funnel'ı görür. [t] float olduğu için sayfa üstüne
+% yerleşecektir; kaynaktaki konumu son sayfalara denk getirmek yeterli.
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  boxstep/.style={
+    rectangle, rounded corners=4pt,
+    draw=black!60, fill=gray!10,
+    text width=40mm, align=center,
+    minimum height=28mm,
+    inner ysep=6pt, inner xsep=5pt
+  },
+  boxfinal/.style={
+    rectangle, rounded corners=4pt,
+    draw=black!80, fill=black!15,
+    text width=40mm, align=center,
+    minimum height=28mm,
+    inner ysep=6pt, inner xsep=5pt
+  },
+  flow/.style={-{Stealth[length=5pt,width=4pt]}, thick, black!50}
+]
+\node[boxstep] (s1) at (0,0) {%
+  \textbf{\small 1.\ Configuration screening}\\[4pt]
+  \scriptsize 11 configs $\times$ 2 outcomes;
+  baseline: direct answering,
+  $T{=}0$, first-person framing
+};
+\node[boxstep] (s2) at (50mm,0) {%
+  \textbf{\small 2.\ Sampling \& temperature}\\[4pt]
+  \scriptsize Shortlisted configs $\times$
+  \{direct, verbalized\}
+  $\times\; T \in \{0,\;0.4,\;0.8\}$
+};
+\node[boxstep] (s3) at (100mm,0) {%
+  \textbf{\small 3.\ Cross-model robustness}\\[4pt]
+  \scriptsize Leading setups re-run across:
+  GPT-4o-mini, GPT-5.4 mini,
+  Gemini 2.5 Flash Lite, Llama 3.3 70B
+};
+\node[boxstep] (s4) at (0,-48mm) {%
+  \textbf{\small 4.\ Presentation stress tests}\\[4pt]
+  \scriptsize Address mode, explicit
+  reasoning instruction, ideology
+  background paragraph, natural rewrite
+};
+\node[boxfinal] (sf) at (50mm,-48mm) {%
+  \textbf{\small Calibrated protocol}\\[4pt]
+  \scriptsize One inference setup per outcome,
+  fixed before the main experiment
+};
+%% Arrows
+\draw[flow] (s1.east) -- (s2.west);
+\draw[flow] (s2.east) -- (s3.west);
+\draw[flow] (s3.south) -- ++(0,-10mm) -- ++(-100mm,0) -- (s4.north);
+\draw[flow] (s4.east) -- (sf.west);
+\end{tikzpicture}
+\caption{Sequential calibration funnel. Each step narrows the candidate set
+by evaluating a different component of the inference setup. Final protocol
+selection is outcome-specific: for the rare binary outcome, we prioritize
+respondent-level classification performance; for the ordered Likert
+outcome, we jointly evaluate aggregate ordinal distributional fit and
+respondent-level ordinal agreement. Stochastic stability across seeds is
+assessed after protocol selection and reported in
+Appendix~\ref{app:stability}.}
+\label{fig:calibration-funnel}
+\end{figure*}
+
+\subsection{Experimental Design}
+\label{sec:experimental_design}
+
+The experiment asks how the political structure surrounding a protest event
+shapes public reactions to it. We manipulate a single factor with two
+levels, which we label \emph{political structure} following the
+opportunity--threat framework of the political process tradition: a
+\textbf{threat} condition, in which the protest occurs during an active
+security episode, and an \textbf{opportunity} condition, in which the same
+protest occurs during an ongoing peace and negotiation process. Each
+condition is operationalized as a short news-style vignette. The threat
+vignette reports a Ministry of National Defense statement on intensified
+armed clashes in northern Syria, including casualties and heightened
+security measures. The opportunity vignette reports ongoing talks between
+the government and Kurdish political representatives, widely attended
+Newroz celebrations, and Newroz messages issued by the President and party
+leaders. Both vignettes close with an identical description of the focal
+event: a march in Ankara at which a group voices the demand for
+Kurdish-language education.\footnote{The full Turkish texts of both
+vignettes, together with English translations, the original item wordings,
+and the prompt templates, are reported in
+Appendix~\ref{app:experimental-materials}.}
+
+Two survey items follow each vignette and are given equal analytical
+weight. \emph{Movement legitimacy} asks respondents to rate agreement with
+the statement that the group is waging a legitimate rights struggle, on a
+five-point Likert scale. \emph{Behavioral intent} asks whether the
+respondent would personally attend such a march, as a binary choice. The
+two items capture complementary faces of public response, an evaluative
+judgment about the movement and a costly behavioral disposition, and mirror
+the response structures on which the inference protocols were calibrated:
+an ordered attitudinal item and a rare binary participation item.
+
+Each outcome is administered under the protocol calibrated for its response
+format (Section~\ref{sec:results}). % TODO: Results section etiketini kontrol et
+The Likert legitimacy item uses the C6 persona configuration with
+verbalized sampling at $T=0.8$; the binary intent item uses C6 with direct
+answering at $T=0$. No information beyond the persona profile, the
+vignette, and the survey item enters the prompt. The prompt templates are
+identical to the calibration stage except for the inserted vignette.
+
+The design is within-persona: all 2{,}615 twins respond under both
+political structures, in independent prompt turns with no shared
+conversational state, so that responses in one condition cannot contaminate
+the other. Condition-specific respondent-level seeds control the stochastic
+sampling step. The primary estimand is the within-persona paired contrast
+between the threat and opportunity conditions, aggregated over the
+synthetic population; we report paired $t$-tests with standardized effect
+sizes ($d_z$) at the population level and within subgroups. Because each
+twin serves as its own control, the design removes all between-respondent
+heterogeneity from the contrast, which is precisely the counterfactual that
+observational protest research cannot recover: the same public observed
+under two political structures.
+
+Consistent with the calibration results, the experiment is interpreted at
+the level of aggregate and subgroup response distributions. The protocols
+were validated for distributional resemblance, and the experimental claims
+inherit that scope.

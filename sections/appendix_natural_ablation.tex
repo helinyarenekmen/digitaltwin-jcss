@@ -1,0 +1,87 @@
+% ---------------------------------------------------------------------------
+% Appendix C.5 — Persona Format Ablation (Structured vs. Natural-Language)
+% Appendix C'nin (Calibration Funnel: Cell-Level Results) SONUNA, C.4'ün
+% ardından beşinci alt bölüm olarak yapıştırılır.
+% Veri: outputs/natural_ablation/metrics_side_by_side.csv
+% Figür: outputs/natural_ablation/fig_structured_vs_natural.pdf
+%
+% ANA METİN BAĞLANTISI — §3.4'teki revize "Prompt-framing stress tests"
+% paragrafı bu ablasyonu dördüncü varyant olarak tanıtır ve
+% \ref{app:natural}'a footnote ile işaret eder; §4.1'deki stres testi bulgu
+% paragrafına da tek cümlelik özet eklenir (calibration_revision_notes'a
+% bakınız).
+%
+% NOT: pacdemons hücresi T=0.8 ile koşulmuştur; nihai protokol T=0 olarak
+% raporlanacaksa ablasyonun T=0.8'de yapıldığı dipnotta belirtilmeli ya da
+% natural koşusu T=0 ile tekrarlanmalıdır.
+% ---------------------------------------------------------------------------
+
+\subsection{Persona Format Ablation: Structured versus Natural-Language
+Profiles}
+\label{app:natural}
+
+The persona profiles used throughout the paper are structured: each survey
+variable appears as a labeled line under a fixed group heading
+(Appendix~D). A plausible alternative is to present the same information as
+flowing prose. This appendix tests whether that choice matters.
+
+\paragraph{Procedure.} For every respondent in the selected C6
+configuration, GPT-4o-mini rewrites the structured profile as a third-person
+Turkish biography under strict instructions: preserve every recorded fact,
+add no new information, add no interpretation or evaluative voice, and omit
+rather than paraphrase missing values. The rewritten biographies replace the
+structured profiles in the two final calibrated cells, with every other
+component of the inference setup held fixed; the structured rows below are
+therefore the final-protocol results from the main text.
+
+\begin{table}[h]
+\centering
+\caption{Structured versus natural-language personas under the final
+calibrated protocols. Arrows indicate the direction of better performance.
+Rec(+) denotes protest-positive recall; $\kappa_w$ is quadratic weighted
+kappa.}
+\label{tab:natural}
+\begin{tabular}{llccccc}
+\hline
+Outcome & Persona format & JSD $\downarrow$ & Wass.\ $\downarrow$ &
+MCC $\uparrow$ & Rec(+) $\uparrow$ & $\kappa_w$ $\uparrow$ \\
+\hline
+\emph{pacdemons} & Structured & 0.001 & 0.017 & 0.430 & 0.536 & --- \\
+                 & Natural    & 0.004 & 0.037 & 0.257 & 0.405 & --- \\[2pt]
+\emph{womenwork} & Structured & 0.030 & 0.218 & ---   & ---   & 0.401 \\
+                 & Natural    & 0.020 & 0.260 & ---   & ---   & 0.165 \\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{Results.} Aggregate distributional fit is broadly preserved and
+not uniformly ordered: the natural format slightly worsens both
+distributional metrics for \emph{pacdemons} and moves them in opposite
+directions for \emph{womenwork}, improving Jensen--Shannon divergence while
+worsening Wasserstein distance. Respondent-level agreement, by contrast,
+degrades sharply and consistently. On the rare binary outcome, the Matthews
+correlation coefficient falls from 0.43 to 0.26 and protest-positive recall
+from 53.6 to 40.5 percent. On the ordered attitudinal outcome, quadratic
+weighted kappa falls from 0.40 to 0.17, less than half its structured
+value. Figure~\ref{fig:natural} displays the full comparison.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_structured_vs_natural.pdf}
+  \caption{Structured versus natural-language personas across all
+  calibration metrics, for both outcomes, under the final calibrated
+  protocols.}
+  \label{fig:natural}
+\end{figure}
+
+\paragraph{Interpretation.} The structured format gives the model an
+explicit map of where each attribute begins and ends and what value it
+takes; the biographical rewrite embeds the same facts in sentences and
+renders scaled quantities as partial verbal cues. What is lost in that
+translation is evidently not the shape of the aggregate distribution, which
+either format can approximate, but the respondent-conditional signal the
+model needs to infer how a specific individual answers. The ablation
+therefore supports the design decision of Section~3.3 on empirical rather
+than only conceptual grounds, and it illustrates why calibration is
+evaluated at two levels throughout the paper: a persona representation can
+pass a purely distributional audit while failing the respondent-level one.

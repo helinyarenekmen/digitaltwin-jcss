@@ -1,0 +1,168 @@
+% ---------------------------------------------------------------------------
+% Appendix H — Experimental Materials
+% Vinyetlerin, soruların ve promptların ORİJİNAL Türkçe halleri + İngilizce
+% çevirileri. exp10_context_peacev3 koşusunda kullanılan metinlerle birebir
+% aynıdır (kaynak: scripts/run_context_experiment.py).
+% ---------------------------------------------------------------------------
+
+\section{Experimental Materials}
+\label{app:materials}
+
+This appendix reproduces the original Turkish texts of the two
+political-structure vignettes, the two outcome items, and the prompt
+templates used in the experimental stage, together with English
+translations. All materials are shown exactly as administered.
+
+\subsection{Vignettes}
+
+\paragraph{Threat (security) condition — original Turkish.}
+\begin{quote}
+Milli Savunma Bakanlığı, Suriye'nin kuzeyinde Kürt silahlı gruplarıyla
+sürdürülen çatışmalara ilişkin açıklama yaptı. Açıklamada, son haftalarda
+bölgede silahlı çatışmaların yoğunlaştığı ve Türk Silahlı Kuvvetleri'nin
+operasyonlarını sürdürdüğü bildirildi. Kayıpların yaşandığı ve bölgede
+güvenlik önlemlerinin artırıldığı aktarıldı.
+
+Bu politik bağlamda Ankara'da düzenlenen yürüyüşte bir grup, Kürtçe anadilde
+eğitim talebini dile getirdi.
+\end{quote}
+
+\paragraph{Threat (security) condition — English translation.}
+\begin{quote}
+The Ministry of National Defense issued a statement on the ongoing clashes
+with Kurdish armed groups in northern Syria. The statement reported that
+armed clashes in the region have intensified in recent weeks and that the
+Turkish Armed Forces are continuing their operations. It was conveyed that
+casualties have occurred and that security measures in the region have been
+increased.
+
+In this political context, at a march held in Ankara, a group voiced the
+demand for Kurdish-language education.
+\end{quote}
+
+\paragraph{Opportunity (peace) condition — original Turkish.}
+\begin{quote}
+Mart ayında, hükümet ile Kürt siyasi temsilcileri arasındaki görüşmelerin
+devam ettiği ve tarafların çözüm sürecine ilişkin olumlu açıklamalar yaptığı
+bir dönemde Newroz kutlamaları geniş katılımla gerçekleşti. Diyarbakır ve
+İstanbul'daki meydanlar gün boyunca kalabalıktı. Cumhurbaşkanı ile çeşitli
+siyasi partilerin liderleri Newroz mesajları yayımladı.
+
+Bu dönemde Ankara'da düzenlenen bir yürüyüşte bir grup, Kürtçe anadilde
+eğitim talebini dile getirdi.
+\end{quote}
+
+\paragraph{Opportunity (peace) condition — English translation.}
+\begin{quote}
+In March, at a time when talks between the government and Kurdish political
+representatives were ongoing and both sides were making positive statements
+about the resolution process, Newroz celebrations took place with broad
+participation. The squares in Diyarbakır and İstanbul were crowded
+throughout the day. The President and the leaders of various political
+parties issued Newroz messages.
+
+During this period, at a march held in Ankara, a group voiced the demand for
+Kurdish-language education.
+\end{quote}
+
+\subsection{Outcome Items}
+
+\paragraph{Movement legitimacy (five-point Likert) — original Turkish.}
+\begin{quote}
+Tüm bunları göz önünde bulundurduğunuzda ``Kürtçe anadilde eğitim eylemi
+yapan bu grup meşru bir hak mücadelesi yürütüyor.'' ifadesine ne ölçüde
+katılıyorsunuz?
+
+1 = Kesinlikle katılmıyorum; 2 = Katılmıyorum; 3 = Ne katılıyorum ne
+katılmıyorum; 4 = Katılıyorum; 5 = Kesinlikle katılıyorum.
+\end{quote}
+
+\paragraph{Movement legitimacy — English translation.}
+\begin{quote}
+Taking all of this into account, to what extent do you agree with the
+statement ``This group holding a demonstration for Kurdish-language
+education is waging a legitimate rights struggle''?
+
+1 = Strongly disagree; 2 = Disagree; 3 = Neither agree nor disagree;
+4 = Agree; 5 = Strongly agree.
+\end{quote}
+
+\paragraph{Behavioral intent (binary) — original Turkish.}
+\begin{quote}
+Tüm bunları göz önünde bulundurduğunuzda, böyle bir yürüyüş düzenlense
+yürüyüşe bizzat katılır mıydınız?
+
+1 = Katılırdım; 2 = Katılmazdım.
+\end{quote}
+
+\paragraph{Behavioral intent — English translation.}
+\begin{quote}
+Taking all of this into account, if such a march were held, would you
+personally attend it?
+
+1 = I would attend; 2 = I would not attend.
+\end{quote}
+
+\subsection{Prompt Templates}
+
+Every prompt consists of a fixed system instruction, the persona profile,
+the condition vignette, and the survey item, separated by horizontal rules.
+No other information enters the prompt.
+
+\paragraph{System instruction (all items) — original Turkish.}
+\begin{quote}
+Aşağıda Türkiye'de yaşayan birinin kişisel profili yer almaktadır. Bu
+kişinin yerine geçerek bir ankete cevap vereceksin. Cevabını sadece verilen
+seçenekler arasından seç. Sayı olarak cevap ver, açıklama ekleme.
+\end{quote}
+
+\paragraph{System instruction — English translation.}
+\begin{quote}
+Below is the personal profile of someone living in Turkey. You will answer a
+survey in this person's place. Choose your answer only from the given
+options. Answer with a number; do not add explanations.
+\end{quote}
+
+\paragraph{Verbalized-sampling suffix (Likert item only) — original
+Turkish.}
+\begin{quote}
+Bu kişinin sana sorulan soruya nasıl cevap vereceğini düşün. Gerçek hayatta
+aynı profile sahip insanların cevapları çeşitlilik gösterir; kişinin gerçek
+cevabı hakkında bir miktar belirsizlik vardır. Önce kısa bir analiz yap (1--2
+cümle), sonra bu kişinin her bir seçeneği seçme olasılığını ver.
+
+Format:\\
+ANALİZ: $\langle$kısa analiz$\rangle$\\
+DAĞILIM: \{"1": 0.X, "2": 0.X, \ldots\}
+
+Önemli: Tüm seçeneklere bir olasılık ata (0.0 da olabilir). Olasılıkların
+toplamı 1.0 olmalı. Aşırı güvenli olma; belirsizlik varsa olasılıkları
+dağıt.
+\end{quote}
+
+\paragraph{Verbalized-sampling suffix — English translation.}
+\begin{quote}
+Think about how this person would answer the question asked. In real life,
+the answers of people with the same profile vary; there is some uncertainty
+about the person's true answer. First make a brief analysis (1--2
+sentences), then give the probability that this person would choose each
+option.
+
+Format:\\
+ANALYSIS: $\langle$brief analysis$\rangle$\\
+DISTRIBUTION: \{"1": 0.X, "2": 0.X, \ldots\}
+
+Important: Assign a probability to all options (it may be 0.0). The
+probabilities must sum to 1.0. Do not be overconfident; if there is
+uncertainty, spread the probabilities.
+\end{quote}
+
+\paragraph{User-message template.} The user message concatenates, in order:
+the persona profile (Appendix~D format), a horizontal rule, the condition
+vignette, a horizontal rule, and the survey item with its response options.
+For the direct-answering protocol the template closes with the line
+\emph{``Cevap (sadece sayı):''} (``Answer (number only):''). Responses under
+verbalized sampling are parsed by extracting the probability distribution
+from the DAĞILIM block, renormalizing it over the valid response options,
+and drawing a single response with the respondent-specific seed, exactly as
+in the calibration stage (Appendix~E).
