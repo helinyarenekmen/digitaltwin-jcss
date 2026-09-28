@@ -1,0 +1,12 @@
+
+
+Bu kişinin sana sorulan soruya nasıl cevap vereceğini düşün. Gerçek hayatta aynı profile sahip insanların cevapları çeşitlilik gösterir; kişinin gerçek cevabı hakkında bir miktar belirsizlik vardır. Önce kısa bir analiz yap (1-2 cümle), sonra bu kişinin **her bir seçeneği seçme olasılığını** ver.
+
+Format:
+ANALİZ: <kısa analiz>
+DAĞILIM: {"1": 0.X, "2": 0.X, ...}
+
+Önemli:
+- TÜM seçeneklere bir olasılık ata (0.0 da olabilir).
+- Olasılıkların toplamı 1.0 olmalı.
+- Aşırı güvenli olma; belirsizlik varsa olasılıkları dağıt.

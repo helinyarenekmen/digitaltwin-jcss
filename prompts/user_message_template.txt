@@ -1,0 +1,10 @@
+{PERSONA_MARKDOWN}
+
+---
+
+Soru: {QUESTION}
+
+Seçenekler:
+{OPTIONS}
+
+Cevap (sadece sayı):
