@@ -1,0 +1,32 @@
+Experiment vignettes — verbatim Turkish source used in the within-persona
+protest experiment (paper Section 4.2 / Appendix H). Each synthetic
+respondent reads BOTH vignettes in independent prompt turns, once as the
+threat condition (S) and once as the opportunity condition (P). The exp13
+run used the v3 opportunity vignette (final protocol; noPC treatment).
+
+================================================================================
+S — Threat context (security)
+================================================================================
+
+Milli Savunma Bakanlığı, Suriye'nin kuzeyinde Kürt silahlı gruplarıyla
+sürdürülen çatışmalara ilişkin açıklama yaptı. Açıklamada, son haftalarda
+bölgede silahlı çatışmaların yoğunlaştığı ve Türk Silahlı Kuvvetleri'nin
+operasyonlarını sürdürdüğü bildirildi. Kayıpların yaşandığı ve bölgede
+güvenlik önlemlerinin artırıldığı aktarıldı.
+
+Bu politik bağlamda Ankara'da düzenlenen yürüyüşte bir grup, Kürtçe
+anadilde eğitim talebini dile getirdi.
+
+
+================================================================================
+P — Opportunity context (peace, v3 final)
+================================================================================
+
+Mart ayında, hükümet ile Kürt siyasi temsilcileri arasındaki görüşmelerin
+devam ettiği ve tarafların çözüm sürecine ilişkin olumlu açıklamalar yaptığı
+bir dönemde Newroz kutlamaları geniş katılımla gerçekleşti. Diyarbakır ve
+İstanbul'daki meydanlar gün boyunca kalabalıktı. Cumhurbaşkanı ile çeşitli
+siyasi partilerin liderleri Newroz mesajları yayımladı.
+
+Bu dönemde Ankara'da düzenlenen bir yürüyüşte bir grup, Kürtçe anadilde
+eğitim talebini dile getirdi.

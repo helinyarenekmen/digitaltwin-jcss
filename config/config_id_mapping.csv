@@ -1,0 +1,18 @@
+paper_id,legacy_id,name,group_count,drop_vars
+C0,C0,Demographics-only baseline,1,
+C1,C1,Full profile,6,
+C2,C3,All except Demographics,5,
+C3,C4,All except Belief/Ideology/Identity,5,
+C4,C5,All except Economic,5,
+C5,C6,All except Social values,5,
+C6,C7,All except Social-Psychological,5,
+C7,C8,All except Political,5,
+C8,C9,Grievance + mobilization core,3,
+C9,C10,Identity + values core,3,
+C10,C11,Park-style minimal,2,
+C6-holdout-pacvolunteer,C7starpacvolunteer,C6 minus pacvolunteer,5,pacvolunteer
+C6-holdout-paccontact,C7starpaccontact,C6 minus paccontact,5,paccontact
+C6-holdout-paccompl,C7starpaccompl,C6 minus paccompl,5,paccompl
+C6-holdout-famroles,C7starfamroles,C6 minus famroles,5,famroles
+C6-holdout-satdem,C7starsatdem,C6 minus satdem,5,satdem
+C6-holdout-polint,C7starpolint,C6 minus polint,5,polint

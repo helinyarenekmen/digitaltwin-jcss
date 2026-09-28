@@ -23,17 +23,6 @@
 
 **Valid range:** (1, 5)
 
-## neilang
-
-**Question:** Bir yeni komşu evinizin yanına taşınacak olsa, farklı dili konuşan insanların komşunuz olmasından ne kadar rahatsız olur veya olmazsınız?
-
-**Options:**
-- 1 = Hiç rahatsız olmazdım
-- 2 = Biraz rahatsız olurdum
-- 3 = Çok rahatsız olurdum
-
-**Valid range:** (1, 3)
-
 ## pacvolunteer
 
 **Question:** Son 12 ay içinde Türkiye'de işlerin düzelmesini sağlamak veya kötüye gitmesini önlemek için kar amacı gütmeyen veya hayır kurumu için gönüllü olarak çalıştınız mı?

@@ -1,26 +1,35 @@
-Creative Commons Attribution 4.0 International License (CC BY 4.0)
+Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 
-Copyright (c) 2026 M. Fuat Kına and Helin Yaren Ekmen
+Copyright (c) 2026 M. Fuat Kına and Helin Yaren Ekmen.
 
-The derived data files and model completions in this repository — including
-persona corpora built from TGSS 2024, model completions, parsed predictions,
-and aggregated metric tables — are licensed under the Creative Commons
-Attribution 4.0 International License.
+All TGSS 2024-derived material in this repository — the cleaned TGSS extract
+(`data/derived/tgss2024_clean.csv`), the variable dictionary
+(`data/derived/TGSS2024_Persona_Variables.xlsx`), the display labels
+(`data/derived/display_labels.json`), the rendered persona corpora
+(`data/derived/personas/`), the aggregated metric tables (`outputs/results/`,
+`outputs/tables/`), and the parsed prediction files (`outputs/parsed/`) —
+is licensed under CC BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/).
 
 You are free to:
-  * Share — copy and redistribute the material in any medium or format
-  * Adapt — remix, transform, and build upon the material for any purpose,
-    even commercially.
+  * Share      — copy and redistribute the material in any medium or format
+  * Adapt      — remix, transform, and build upon the material
 
 Under the following terms:
-  * Attribution — You must give appropriate credit to the authors, provide a
-    link to the license, and indicate if changes were made.
-
-Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+  * Attribution   — You must give appropriate credit, provide a link to the
+                    licence, and indicate if changes were made.
+  * NonCommercial — You may not use the material for commercial purposes.
 
 --------------------------------------------------------------------------------
-IMPORTANT — TGSS 2024 raw microdata (data/raw/) is NOT redistributed here.
-It is subject to a separate license held by the TGSS 2024 data producers and
-is available for academic use from Zenodo:
-    https://doi.org/10.5281/zenodo.18721350
-See data/raw/README.md for retrieval instructions.
+Attribution required for TGSS-derived material:
+
+  * Kına, M. F. (2026). *2024 Turkish General Social Survey (TGSS 2024)*
+    (v1) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.18721350
+  * Kına, M. F. & Ekmen, H. Y. (2026). Replication materials for
+    "Calibrating Synthetic Respondents: A Within-Persona Experiment on
+    Public Reactions to Protest in Turkey." SocArXiv,
+    https://osf.io/preprints/socarxiv/hp7gz_v1
+
+--------------------------------------------------------------------------------
+The TGSS 2024 raw microdata (.sav) is NOT redistributed here. It is available
+from the Zenodo record above under the same CC BY-NC 4.0 licence held by
+the data producers.
