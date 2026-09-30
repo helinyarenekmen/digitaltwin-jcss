@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-05-25T11:11:38.390331",
-  "source_file": "/Users/helinekmen/Desktop/digitaltwin/data/TGSS2024.sav",
+  "source_file": "data/raw/TGSS2024.sav",
   "n_rows": 2615,
   "n_cols": 664,
   "column_labels": {

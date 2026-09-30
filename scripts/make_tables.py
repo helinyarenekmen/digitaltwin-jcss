@@ -426,10 +426,13 @@ def table_14() -> dict[str, pd.DataFrame]:
     pa = pa[["Framing", "Seed", "JSD", "Delta_p_pp", "MCC", "k", "Rec+"]].sort_values(["Framing", "Seed"]).astype({"Framing": str})
 
     w = _load("womenwork")
+    # Plain baseline only: drop rows that carry a stress-test variant
+    # (Second person / Reasoning instruction / Ideology background / Natural rewrite).
+    _STRESS = "sendili|explicitcot|politicalcontext|natural_ablation"
     bw = w[(w["Config"] == "C6") & (w["Model"] == "gpt-5.4-mini") &
             w["Sampling"].fillna("").str.contains("vs") & (w["Temperature"] == 0.8) &
             (w["Seed"].isin([0, 1, 2])) &
-            ~w["Source_CSV"].fillna("").str.contains("politicalcontext")].copy()
+            ~w["Source_CSV"].fillna("").str.contains(_STRESS)].copy()
     bw["Framing"] = "Baseline"
     bgw = w[(w["Config"] == "C6") & (w["Model"] == "gpt-5.4-mini") &
              w["Sampling"].fillna("").str.contains("vs") & (w["Temperature"] == 0.8) &
@@ -468,16 +471,14 @@ def table_15() -> pd.DataFrame:
 
     The paper protocol samples from each respondent's verbalized distribution
     using a SINGLE numpy Generator initialised once at the base seed and
-    advanced across respondents in respondent-id-sorted order. For pacdemons
-    (direct answering) there is no client-side sampling, so the archived
+    advanced across respondents in file-appearance order. For pacdemons (direct
+    answering) there is no client-side sampling, so the archived
     predicted_value is used directly.
 
-    Reads the three seed files (s0, s1, s2) for the paper's final protocol on
-    each outcome, then for each seed pair reports:
-      * exact_agreement                        — identical predictions
-      * within_1_agreement                     — predictions within one category
-      * cohen_kappa (pacdemons)                — unweighted Cohen's kappa
-      * weighted_kappa_quadratic (womenwork)   — ordinal, quadratic weights
+    Fresh-clone fallback: when the raw completions cache is not present, the
+    committed copy at outputs/results/table_15_seed_pair_agreement.csv is
+    returned so that Path B (reproduce from archived outputs) does not require
+    the raw JSONL bundle.
     """
     import json, os, re
     from itertools import combinations
@@ -491,6 +492,21 @@ def table_15() -> pd.DataFrame:
             Path(os.path.expanduser("~/Library/Caches/digitaltwin_calibration")) / cache_leaf / outcome / f"C7_{model_alias}_T08_ben_{sampling}_nocot_pc_s{seed}.jsonl",
         ]
         return next((c for c in candidates if c.exists()), None)
+
+    # Fresh-clone shortcut: no cache anywhere → return the committed CSV.
+    any_cache = any(
+        _find(leaf, outcome, ma, samp, s) is not None
+        for outcome, leaf, ma, samp in (
+            ("pacdemons", "screening_T08",        "gpt4omini", "direct"),
+            ("womenwork", "screening_vs_cot_T08", "gpt54mini", "vs_cot"),
+        )
+        for s in (0, 1, 2)
+    )
+    if not any_cache:
+        committed = ROOT / "outputs" / "results" / "table_15_seed_pair_agreement.csv"
+        if committed.exists():
+            print(f"  [Table 15] cache absent → using committed {committed.relative_to(ROOT)}")
+            return pd.read_csv(committed)
 
     _DIST_RE = re.compile(r"DAĞILIM:\s*(\{[^}]+\})", re.DOTALL)
 

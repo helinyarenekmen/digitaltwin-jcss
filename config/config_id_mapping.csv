@@ -16,3 +16,4 @@ C6-holdout-paccompl,C7starpaccompl,C6 minus paccompl,5,paccompl
 C6-holdout-famroles,C7starfamroles,C6 minus famroles,5,famroles
 C6-holdout-satdem,C7starsatdem,C6 minus satdem,5,satdem
 C6-holdout-polint,C7starpolint,C6 minus polint,5,polint
+C6-no-participation,C7star,C6 minus all nine past-year political-participation variables,5,paccontact;paccompl;paccimer;pacparty;pacvolunteer;pacboycott;paconline;paccult;paccharity
