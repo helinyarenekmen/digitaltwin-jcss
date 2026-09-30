@@ -3,21 +3,21 @@
 
 Mevcut sorun:
   Tüm 1692 respondent için tek bir rng (seed=0) kullanılıyor → numpy'nin
-  sequence'i deterministik olduğu için tahminler dağılım çevresinde değil,
-  rng'nin sırasında yığılıyor.
+  sequence is deterministic, so predictions are not around the distribution
+  but pile up along the rng sequence.
 
 Çözüm:
-  Her respondent için seed = md5(base_seed|respondent_id) → bağımsız
-  örnekleme. raw_response saklı olduğu için API çağrısına gerek yok.
+  For each respondent seed = md5(base_seed|respondent_id) → independent
+  sampling. raw_response is preserved so no API call is needed.
 
-JSONL'lerin raw_response alanından DAĞILIM parse edilir, yeniden sample edilir,
-`predicted_value` güncellenir. Dosya yerinde yazılır (raw_response korunur,
-geri alınabilir).
+The DAĞILIM (distribution) block is parsed from raw_response and resampled;
+`predicted_value` is updated. The file is written in place (raw_response preserved,
+reversible).
 
 Usage:
-  python scripts/07_resample_vs_cot.py --temperature 0.8 --dry-run   # önizleme
-  python scripts/07_resample_vs_cot.py --temperature 0.8             # yerinde yaz
-  python scripts/07_resample_vs_cot.py --temperature 0.0 0.8         # ikisi de
+  python scripts/07_resample_vs_cot.py --temperature 0.8 --dry-run   # preview
+  python scripts/07_resample_vs_cot.py --temperature 0.8             # write in place
+  python scripts/07_resample_vs_cot.py --temperature 0.0 0.8         # both
 """
 
 import argparse

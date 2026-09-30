@@ -20,7 +20,7 @@ import numpy as np
 CALIB = Path(str(_CACHE))
 OUT_DIR = Path(__file__).resolve().parents[1] / "outputs"
 
-# 5 finalist'in tanımı: (label, outcome, config, model, sampling, T, primary_metric, secondary)
+# Definition of the 5 finalists: (label, outcome, config, model, sampling, T, primary_metric, secondary)
 FINALISTS = [
     ("F1: pacdemons C7 4o-mini Direct T=0.8",
      "pacdemons", "C7", "gpt-4o-mini", "direct", 0.8, "mcc", "jsd"),

@@ -304,8 +304,8 @@ def run(variant: str = "direct", temperature: float = 0.0,
                 f"fail={pct_fail:.1f}%{flag}"
             )
 
-            # JSONL'deki ilk satırdan gerçek inference metadata'sını oku
-            # (hardcode etmek vs_cot/T=0.8 cell'lerinde yalan üretiyordu).
+            # JSONL'deki ilk satrdan gerek inference metadata'sn oku
+            # (hardcoding it produced misleading numbers in vs_cot / T=0.8 cells).
             sample_row = pred_df.iloc[0]
             rows.append(dict(
                 outcome=outcome,

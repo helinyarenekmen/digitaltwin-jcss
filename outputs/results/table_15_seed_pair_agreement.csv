@@ -1,0 +1,7 @@
+outcome,seed_pair,n,exact_agreement,within_1_agreement,cohen_kappa,weighted_kappa_quadratic
+pacdemons,s0-s1,1707,0.99,1.0,0.9211,
+pacdemons,s0-s2,1707,0.9912,1.0,0.9304,
+pacdemons,s1-s2,1707,0.9918,1.0,0.9353,
+womenwork,s0-s1,2588,0.3026,0.6847,0.1168,0.3952
+womenwork,s0-s2,2588,0.3095,0.682,0.126,0.3983
+womenwork,s1-s2,2588,0.3184,0.6804,0.1368,0.4123

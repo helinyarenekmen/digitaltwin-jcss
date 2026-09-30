@@ -43,13 +43,13 @@ from openai import AsyncOpenAI
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-# layer_a klasörü iCloud-senkronize Desktop'tan ~/Library/Caches'e taşındı
-# (28K küçük dosya iCloud'da sürekli offload edilip okuma 1500ms'ye çıkıyordu).
-# outputs/layer_a symlink'i iCloud sürekli "layer_a 2" diye rename ediyor,
-# bu yüzden script direkt gerçek yolu kullanıyor.
+# The layer_a folder was moved from iCloud-synced Desktop to ~/Library/Caches
+# (28K kk dosya iCloud'da srekli offload edilip okuma 1500ms'ye kyordu).
+# The outputs/layer_a symlink was constantly renamed to "layer_a 2" by iCloud,
+# bu yzden script direkt gerek yolu kullanyor.
 LAYER_A_DIR   = Path(str(_PERSONA))
-# outputs/calibration de iCloud-dışına taşındı: 6MB+'lik JSONL'ler
-# sürekli iCloud upload'a uğrayıp load_done_ids'i kilitliyordu.
+# outputs/calibration was also moved outside iCloud: 6MB+ JSONLs
+# were constantly re-uploaded and blocked load_done_ids.
 CALIB_DIR     = Path(str(_CACHE))
 SCREENING_DIR = CALIB_DIR / "screening"
 ROBUST_DIR    = CALIB_DIR / "robustness"
@@ -293,7 +293,7 @@ MODEL_ALIASES = {
 
 SYSTEM_BEN = (
     "Aşağıda Türkiye'de yaşayan birinin kişisel profili yer almaktadır. "
-    "Bu kişinin yerine geçerek bir ankete cevap vereceksin. "
+    "Bu kişinin instead of geçerek bir ankete cevap vereceksin. "
     "Cevabını sadece verilen seçenekler arasından seç. "
     "Sayı olarak cevap ver, açıklama ekleme."
 )
@@ -335,8 +335,8 @@ EXPLICIT_COT_SUFFIX_VSCOT = (
     "sonra DAĞILIM'ı bu çıkarsama temelinde ver."
 )
 
-# Political context: Türkiye ideolojik yapısı hakkında domain knowledge.
-# Phase 15 testi: bu context'in calibration performansına etkisini ölçer.
+# Political context: domain knowledge about Turkey's ideological structure.
+# Phase 15 test: measures the effect of this context on calibration performance.
 POLITICAL_CONTEXT_TR = (
     "Türkiye'nin ideolojik yapısı iki temel eksen üzerinde şekillenir: "
     "sol-sağ siyasi ekseni ve seküler-dindar kültürel ekseni. "
@@ -371,9 +371,9 @@ def build_prompt(
         # Direct + explicit CoT: ask for reasoning then CEVAP: X format
         system = system + EXPLICIT_COT_SUFFIX_DIRECT
 
-    # Direct (no CoT) → "Cevap (sadece sayı):" tail.
+    # Direct (no CoT) → tails the user message with "Cevap (sadece sayı):" ("Answer (number only):").
     # Direct + CoT → tail removed (format is enforced by CEVAP: X marker).
-    # VS-CoT → ANALİZ+DAĞILIM format takes over, no tail.
+    # VS-CoT → the ANALYSIS+DISTRIBUTION format takes over, no tail.
     if sampling == "vs_cot" or cot:
         ending = ""
     else:
@@ -511,12 +511,12 @@ async def predict_one(
     for attempt in range(2):  # attempt 0 = first try, attempt 1 = single retry on parse fail
         for backoff_attempt in range(5):
             try:
-                # GPT-5 ailesi 'max_completion_tokens' istiyor; eski modeller
-                # 'max_tokens' ile çalışır. Modele göre doğru parametreyi seç.
-                # CoT eklenince reasoning için daha çok token gerekir.
-                # VS-CoT 150 -> 250 değiştirildi (2026-06-27): zengin persona'larda
-                # (C11 gibi) ANALİZ uzun yazılıyor, DAĞILIM JSON yarıda kesiliyordu
-                # → parse_failure. 250 token uzun analiz + tam JSON için yeterli.
+                # GPT-5 family expects 'max_completion_tokens'; older models
+                # use 'max_tokens'. Pick the correct parameter per model.
+                # With CoT enabled, reasoning needs more tokens.
+                # VS-CoT 150 -> 250 changed (2026-06-27): with rich personas
+                # (C11 gibi) the ANALYSIS is long and the DISTRIBUTION JSON was being cut off
+                # → parse_failure. 250 tokens is enough for long analysis + full JSON.
                 if settings["sampling"] == "vs_cot":
                     max_out = 400 if settings.get("cot", False) else 250
                 else:
@@ -682,8 +682,8 @@ async def screening_mode(client: AsyncOpenAI, args) -> None:
     if args.political_context:
         settings["political_context"] = True
 
-    # Output klasörleri: canonical Step 2A (direct + T=0) → screening/.
-    # Diğer her kombinasyon ayrı klasöre yazılır, mevcut sonuçlar dokunulmaz.
+    # Output folders: canonical Step 2A (direct + T=0) → screening/.
+    # Dier her kombinasyon ayr klasre yazlr, mevcut sonular dokunulmaz.
     temp_str = _TEMP_LABELS.get(settings["temperature"],
                                 f"T{settings['temperature']}".replace(".", ""))
     if args.sampling == "direct" and settings["temperature"] == 0.0:
@@ -777,33 +777,30 @@ async def robustness_mode(client: AsyncOpenAI, args) -> None:
 # Entry point
 # ---------------------------------------------------------------------------
 
-OPENAI_MODELS = {"gpt-4o-mini", "gpt-4o"}
-ANTHROPIC_MODELS = {"claude-haiku", "claude-haiku-4-5-20251001"}
+OPENAI_MODELS = {"gpt-4o-mini", "gpt-4o", "gpt-5-mini", "gpt-5.4-mini", "gpt-5", "gpt-4.1-mini"}
 
 
 def get_client(model: str) -> AsyncOpenAI:
-    if model in ANTHROPIC_MODELS:
-        # TODO Step 2C: replace with anthropic.AsyncAnthropic client.
-        # Anthropic SDK uses a different call signature (client.messages.create,
-        # not client.chat.completions.create). predict_one() will need a model
-        # dispatch branch before Step 2C runs with Claude-Haiku.
-        # Tracking issue: CALIBRATION_SPEC.md §15 "Claude-Haiku API access".
+    if model not in OPENAI_MODELS:
         raise NotImplementedError(
-            f"Model '{model}' requires the Anthropic SDK. "
-            "Wire up anthropic.AsyncAnthropic before running Step 2C. "
-            "See CALIBRATION_SPEC.md §15."
+            f"Model '{model}' is not part of the OpenAI dispatch. Use the "
+            "dedicated runner (09_run_calibration_gemini.py for Gemini, "
+            "10_run_calibration_openrouter.py for Llama), or see "
+            "supplementary/scripts/08_run_calibration_claude.py for the "
+            "supplementary Claude Haiku cell."
         )
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         api_key = getpass.getpass("OpenAI API key: ").strip()
     if not api_key:
-        print("ERROR: API key boş.", file=sys.stderr)
+        print("ERROR: API key is empty.", file=sys.stderr)
         sys.exit(1)
     return AsyncOpenAI(api_key=api_key)
 
 
 async def amain(args) -> None:
-    # Screening always uses gpt-4o-mini; robustness may include claude-haiku
+    # Screening always uses gpt-4o-mini; other models are handled by the
+    # dedicated per-vendor runners.
     if args.model is not None:
         model = args.model
     else:

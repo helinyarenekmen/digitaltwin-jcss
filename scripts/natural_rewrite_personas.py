@@ -62,7 +62,7 @@ SYSTEM_PROMPT = (
     "ölçek değerleri bulunabilir (kimlik yakınlığı, parti yakınlığı, "
     "memnuniyet, güven, tehdit algısı vb.). Bu değerleri asla \"AK Parti'ye "
     "yakınlık: 8\" veya \"Sünni kimlik yakınlığı 10\" gibi sayı olarak yazma; "
-    "onun yerine ölçeğin anlamına uygun doğal ifadelere dönüştür: "
+    "onun instead of ölçeğin anlamına uygun doğal ifadelere dönüştür: "
     "\"çok yakın hisseder\", \"oldukça yakın\", \"orta düzeyde yakın\", "
     "\"biraz yakın\", \"uzak\", \"hiç yakın hissetmez\" gibi. Aynısı Likert "
     "skorları için de geçerli. Gelir dilimleri (\"25.000-29.999 TL\") ve "

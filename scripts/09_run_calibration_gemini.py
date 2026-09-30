@@ -107,7 +107,7 @@ _TEMP_LABELS = {0.0: "T0", 0.3: "T03", 0.4: "T04", 0.7: "T07", 0.8: "T08", 1.0: 
 
 SYSTEM_BEN = (
     "Aşağıda Türkiye'de yaşayan birinin kişisel profili yer almaktadır. "
-    "Bu kişinin yerine geçerek bir ankete cevap vereceksin. "
+    "Bu kişinin instead of geçerek bir ankete cevap vereceksin. "
     "Cevabını sadece verilen seçenekler arasından seç. "
     "Sayı olarak cevap ver, açıklama ekleme."
 )
@@ -198,7 +198,7 @@ def parse_direct(raw: str, valid_range: tuple[int, int]) -> int | None:
     return val if lo <= val <= hi else None
 
 
-def parse_vs_cot(raw: str, valid_range: tuple[int, int], seed: int) -> int | None:
+def parse_vs_cot(raw: str, valid_range: tuple[int, int], rng) -> int | None:
     import numpy as np
     m = re.search(r"DAĞILIM:\s*(\{[^}]+\})", raw, re.DOTALL)
     if not m:
@@ -213,7 +213,6 @@ def parse_vs_cot(raw: str, valid_range: tuple[int, int], seed: int) -> int | Non
         total = sum(options.values())
         keys = list(options.keys())
         probs = [options[k] / total for k in keys]
-        rng = np.random.default_rng(seed)
         return int(rng.choice(keys, p=probs))
     except Exception:
         return None
@@ -275,8 +274,8 @@ async def predict_one(
         seed=settings["seed"],
         timestamp=datetime.now().isoformat(),
     )
-    # Gemini analizleri OpenAI/Claude'tan uzun yazıyor → VS-CoT için
-    # 400 token (150 yetmiyordu, %9 cevap DAĞILIM bitmeden kesiliyordu).
+    # Gemini analyses are longer than OpenAI/Claude → for VS-CoT
+    # 400 tokens (150 was not enough, 9% of answers were cut off before the DAĞILIM ended).
     max_out = 400 if settings["sampling"] == "vs_cot" else 10
     config = types.GenerateContentConfig(
         system_instruction=system,
@@ -322,7 +321,7 @@ async def predict_one(
                             "parse_status": "api_error"}
 
         if settings["sampling"] == "vs_cot":
-            val = parse_vs_cot(raw, spec["valid_range"], settings["seed"])
+            val = parse_vs_cot(raw, spec["valid_range"], rng)
         else:
             val = parse_direct(raw, spec["valid_range"])
         if val is not None:
@@ -347,6 +346,8 @@ async def run_cell(
     settings: dict,
     out_path: Path,
 ) -> None:
+    import numpy as np
+    rng = np.random.default_rng(settings[\"seed\"])
     done_ids = load_done_ids(out_path)
     remaining = respondents[~respondents["respondent_id"].isin(done_ids)]
 
