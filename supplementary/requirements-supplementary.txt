@@ -1,0 +1,6 @@
+# Extra dependencies only needed for scripts under supplementary/.
+# Install alongside the main requirements when reproducing the Claude Haiku
+# cell or the Gwet AC2 calculation:
+#     pip install -r requirements.txt -r supplementary/requirements-supplementary.txt
+
+anthropic==0.42.0

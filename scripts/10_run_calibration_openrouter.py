@@ -109,7 +109,7 @@ _TEMP_LABELS = {0.0: "T0", 0.3: "T03", 0.4: "T04", 0.7: "T07", 0.8: "T08", 1.0: 
 
 SYSTEM_BEN = (
     "Aşağıda Türkiye'de yaşayan birinin kişisel profili yer almaktadır. "
-    "Bu kişinin yerine geçerek bir ankete cevap vereceksin. "
+    "Bu kişinin instead of geçerek bir ankete cevap vereceksin. "
     "Cevabını sadece verilen seçenekler arasından seç. "
     "Sayı olarak cevap ver, açıklama ekleme."
 )
@@ -162,7 +162,7 @@ def parse_direct(raw, valid_range):
     return val if lo <= val <= hi else None
 
 
-def parse_vs_cot(raw, valid_range, seed):
+def parse_vs_cot(raw, valid_range, rng):
     import numpy as np
     m = re.search(r"DAĞILIM:\s*(\{[^}]+\})", raw, re.DOTALL)
     if not m:
@@ -177,7 +177,6 @@ def parse_vs_cot(raw, valid_range, seed):
         total = sum(options.values())
         keys = list(options.keys())
         probs = [options[k] / total for k in keys]
-        rng = np.random.default_rng(seed)
         return int(rng.choice(keys, p=probs))
     except Exception:
         return None
@@ -229,7 +228,7 @@ async def predict_one(client, semaphore, respondent_id, config_id, outcome,
     raw = ""
     prompt_tokens = 0
     completion_tokens = 0
-    # Llama analizleri uzun olabiliyor → VS-CoT için Gemini gibi 400 token
+    # Llama analizleri uzun olabiliyor  VS-CoT iin Gemini gibi 400 token
     max_out = 400 if settings["sampling"] == "vs_cot" else 10
 
     for attempt in range(2):
@@ -266,7 +265,7 @@ async def predict_one(client, semaphore, respondent_id, config_id, outcome,
                             "parse_status": "api_error"}
 
         if settings["sampling"] == "vs_cot":
-            val = parse_vs_cot(raw, spec["valid_range"], settings["seed"])
+            val = parse_vs_cot(raw, spec["valid_range"], rng)
         else:
             val = parse_direct(raw, spec["valid_range"])
         if val is not None:
@@ -284,6 +283,8 @@ async def predict_one(client, semaphore, respondent_id, config_id, outcome,
 
 async def run_cell(client, semaphore, config_id, outcome, respondents,
                    settings, out_path):
+    import numpy as np
+    rng = np.random.default_rng(settings[\"seed\"])
     done_ids = load_done_ids(out_path)
     remaining = respondents[~respondents["respondent_id"].isin(done_ids)]
 
@@ -405,7 +406,7 @@ def get_client() -> AsyncOpenAI:
         base_url=OPENROUTER_BASE_URL,
         api_key=api_key,
         default_headers={
-            # OpenRouter ister: app identification (optional ama önerilen)
+            # OpenRouter expects app identification (optional but recommended)
             "HTTP-Referer": "https://github.com/local/digitaltwin",
             "X-Title": "TGSS Digital Twin Calibration",
         },

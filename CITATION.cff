@@ -29,3 +29,34 @@ preferred-citation:
   doi: "10.31235/osf.io/hp7gz_v1"
   url: "https://osf.io/preprints/socarxiv/hp7gz_v1"
   notes: "SocArXiv preprint (v1). Peer-reviewed version submitted to the Journal of Computational Social Science."
+references:
+  - type: data
+    authors:
+      - family-names: Nisanci
+        given-names: Zubeyir
+      - family-names: Kilavuz
+        given-names: M. Tahir
+      - family-names: Aysan
+        given-names: Mehmet Fatih
+      - family-names: Ovayurt
+        given-names: M. Enes Talha
+      - family-names: YÜCE
+        given-names: BELKIS
+      - family-names: Aydın
+        given-names: A. Betül
+      - family-names: KAVDIR
+        given-names: ARİF YASİN
+      - family-names: Alboğa
+        given-names: Muhammed H.
+      - family-names: Akbulut
+        given-names: Yusuf
+      - family-names: Atik
+        given-names: Emrullah
+      - family-names: Aydın
+        given-names: Rana Nur
+    title: "Turkish General Social Survey (TGSS) 2024: Dataset"
+    year: 2026
+    doi: "10.5281/zenodo.18721350"
+    url: "https://doi.org/10.5281/zenodo.18721350"
+    license: "CC-BY-NC-4.0"
+    notes: "Source microdata; cleaned extract redistributed under the same terms in data/derived/tgss2024_clean.csv."

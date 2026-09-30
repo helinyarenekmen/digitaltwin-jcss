@@ -109,7 +109,7 @@ CELLS: dict[str, dict] = {
 
 SYSTEM_BEN = (
     "Aşağıda Türkiye'de yaşayan birinin kişisel profili yer almaktadır. "
-    "Bu kişinin yerine geçerek bir ankete cevap vereceksin. "
+    "Bu kişinin instead of geçerek bir ankete cevap vereceksin. "
     "Cevabını sadece verilen seçenekler arasından seç. "
     "Sayı olarak cevap ver, açıklama ekleme."
 )
@@ -169,7 +169,6 @@ def parse_vs_cot(raw: str, valid_range: tuple[int, int],
         if not options: return None, None
         total = sum(options.values())
         norm = {k: v / total for k, v in options.items()}
-        rng = np.random.default_rng(seed)
         return int(rng.choice(list(norm), p=list(norm.values()))), norm
     except Exception:
         return None, None

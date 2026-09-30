@@ -26,14 +26,21 @@ protest for Kurdish-language education in Ankara.
 * Derived data (persona corpora, cleaned TGSS extract, model completions,
   metric tables) — **CC BY-NC 4.0** (see `LICENSE-DATA`).
 * TGSS 2024 microdata — the source dataset is distributed under the
-  producers' own **CC BY-NC 4.0** licence and is **not** redistributed
-  here. Download from Zenodo (Kına 2026, [10.5281/zenodo.18721350][tgss])
-  and place the .sav file at `data/raw/TGSS2024.sav`.
+  producers' own **CC BY-NC 4.0** licence. The raw `.sav` is not
+  redistributed here; a cleaned extract of the full microdata is included
+  under `data/derived/tgss2024_clean.csv` under the same CC BY-NC 4.0
+  terms. Path B does not require the `.sav`. If you want to regenerate the
+  cleaned extract from the source, download the SPSS file from Zenodo and
+  save it at `data/raw/TGSS2024.sav`; see `data/raw/README.md`.
+
+**Cite the TGSS 2024 producers** if you use any TGSS-derived material:
+
+> Nisanci, Z., Kilavuz, M. T., Aysan, M. F., Ovayurt, M. E. T., YÜCE, B.,
+> Aydın, A. B., KAVDIR, A. Y., Alboğa, M. H., Akbulut, Y., Atik, E., &
+> Aydın, R. N. (2026). *Turkish General Social Survey (TGSS) 2024:
+> Dataset* [Data set]. Zenodo. [10.5281/zenodo.18721350][tgss]
 
 [tgss]: https://doi.org/10.5281/zenodo.18721350
-
-If you use TGSS-derived material from this repository, cite the TGSS 2024
-data producers **and** this replication archive.
 
 ## Setup
 
@@ -58,14 +65,14 @@ every API call from scratch.
 
 ### Path B — Reproduce every table and figure from archived outputs
 
-No API calls, ~5 minutes on a laptop.
+No API calls, ~5 minutes on a laptop. Does **not** require the TGSS .sav —
+the persona engine reads `data/derived/tgss2024_clean.csv`, which is included.
 
 ```bash
 # 1. Download the Zenodo completions bundle into cache/calibration/
 #    (Zenodo DOI to be added on release)
 
 # 2. Rebuild persona corpora deterministically (no API):
-python scripts/00_prepare_data.py             # TGSS .sav → cleaned CSV
 python src/personas/01_persona_engine.py      # 2,615 respondents × 11 configs
 
 # 3. Regenerate tables and figures:
@@ -160,9 +167,11 @@ is a human-readable dump of the mapping. Every user-facing artefact (Excel
 |----------|------------------|--------------|-------------|-------|-------------------------------------|-------|
 | OpenAI | `gpt-4o-mini` | 2026-05 → 2026-08 | 0.0, 0.4, 0.8 | 1.0 (default) | 10 / 250 / 200 | 0, 1, 2 |
 | OpenAI | `gpt-5.4-mini` | 2026-06 → 2026-08 | 0.8 | 1.0 | 250 (VS-CoT) | 0, 1, 2 |
-| Anthropic | `claude-haiku-4-5-20251001` | 2026-07 → 2026-08 | 0.8 | 1.0 | 250 (VS-CoT) | 0 |
 | Google | `gemini-2.5-flash-lite` | 2026-06 → 2026-08 | 0.0, 0.4, 0.8 | 1.0 | 250 (VS-CoT) | 0, 1, 2 |
 | OpenRouter → Meta | `meta-llama/llama-3.3-70b-instruct` | 2026-07 | 0.8 | 1.0 | 250 (VS-CoT) | 0, 1, 2 |
+
+Claude Haiku 4.5 is not part of the paper; the supplementary runner and
+requirements for it live under `supplementary/`.
 
 `top_p` is provider default (`1.0`) throughout. Access dates are the range
 across which cells for a given model were populated in the JSONL cache;

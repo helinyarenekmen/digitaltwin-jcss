@@ -48,7 +48,7 @@ OUTCOME_META = {
     "pacdemons": {
         "title": "Sokak Eylemi Katılımı (pacdemons)",
         "categories": {1: "Evet", 2: "Hayır"},
-        # Diverging: minority (Evet) in red, majority (Hayır) in gray-blue
+        # Diverging: minority (Yes) in red, majority (No) in gray-blue
         "colors": {1: "#c0392b", 2: "#7f8c8d"},
         "valid_range": (1, 2),
         "rank_metric": "composite_score",
@@ -278,7 +278,7 @@ def plot_outcome(
         mpatches.Patch(facecolor="none", edgecolor="#2980b9", linewidth=1.8,
                        linestyle="dashed", label="Shortlist (Step 2C)"),
     ]
-    # Lejant grafik alanının dışına (sağ tarafa) yerleştirilir
+    # Legend placed outside the plot area (to the right)
     ax.legend(
         handles=legend_handles,
         loc="center left",
@@ -317,7 +317,7 @@ def plot_summary(
     n = len(figs_data)
     fig, axes = plt.subplots(1, n, figsize=(7 * n, 5.5))
     fig.patch.set_facecolor("white")
-    # matplotlib n=1'de tek Axes döner, n>1'de array — normalleştir
+    # matplotlib returns a single Axes when n=1 and an array when n>1 — normalise
     axes_list = [axes] if n == 1 else list(axes)
 
     for ax, (outcome, dist_df, metric_map, ranking) in zip(axes_list, figs_data):
@@ -354,7 +354,7 @@ def plot_summary(
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
 
-        # Compact legend below the subplot (grafik dışında)
+        # Compact legend below the subplot (outside the plot area)
         handles = [mpatches.Patch(facecolor=colors[i], label=cat_labels_short[i])
                    for i in range(len(cats))]
         ax.legend(

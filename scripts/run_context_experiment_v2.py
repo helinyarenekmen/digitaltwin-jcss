@@ -238,7 +238,7 @@ def make_conditions(peace_version: str) -> list[Condition]:
 # ---------------------------------------------------------------------------
 SYSTEM_BEN = (
     "Aşağıda Türkiye'de yaşayan birinin kişisel profili yer almaktadır. "
-    "Bu kişinin yerine geçerek bir ankete cevap vereceksin. "
+    "Bu kişinin instead of geçerek bir ankete cevap vereceksin. "
     "Cevabını sadece verilen seçenekler arasından seç. "
     "Sayı olarak cevap ver, açıklama ekleme."
 )
