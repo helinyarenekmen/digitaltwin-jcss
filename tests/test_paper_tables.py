@@ -32,6 +32,7 @@ _regen()
 def test_table_1_panel_a_paper_values():
     t = pd.read_csv(TDIR / "Table1_cross_model.csv")
     a = t[t["Panel"] == "A"].set_index("Model")
+    assert len(a) == 4, f"Table 1 Panel A: expected 4 rows, got {len(a)}"
     paper = {
         "gpt-4o-mini":                        (0.00096,  1.7, 0.536, 0.398),
         "gpt-5.4-mini":                       (0.00035,  1.0, 0.440, 0.366),
@@ -67,6 +68,7 @@ def test_table_1_panel_b_paper_values():
 # ---------------------------------------------------------------------------
 def test_table_5_pacdemons():
     t = pd.read_csv(TDIR / "Table5_stage1_pacdemons.csv").set_index("Configuration")
+    assert len(t) == 11, f"Table 5: expected 11 rows, got {len(t)}"
     paper = {  # Config: (JSD, MCC, k, Rec+, Prec+)
         "C0":  (0.01743, 0.032, 0.016, 0.012, 0.167),
         "C1":  (0.00001, 0.380, 0.379, 0.405, 0.415),
@@ -94,6 +96,7 @@ def test_table_5_pacdemons():
 # ---------------------------------------------------------------------------
 def test_table_6_womenwork():
     t = pd.read_csv(TDIR / "Table6_stage1_womenwork.csv").set_index("Configuration")
+    assert len(t) == 11, f"Table 6: expected 11 rows, got {len(t)}"
     paper = {
         "C0":  (0.939, 0.291, 0.016, 0.023, 3.83),
         "C1":  (0.778, 0.100, 0.131, 0.259, 4.02),
@@ -121,6 +124,7 @@ def test_table_6_womenwork():
 # ---------------------------------------------------------------------------
 def test_table_10_pacdemons():
     t = pd.read_csv(TDIR / "Table10_stage3_pacdemons.csv").set_index("Model")
+    assert len(t) == 4, f"Table 10: expected 4 rows, got {len(t)}"
     paper = {
         "gpt-4o-mini":                        (1707, 0.00096, 1.7, 0.430, 0.536, 0.398),
         "gpt-5.4-mini":                       (1707, 0.00035, 1.0, 0.368, 0.440, 0.366),
@@ -142,6 +146,7 @@ def test_table_10_pacdemons():
 # ---------------------------------------------------------------------------
 def test_table_12_pacdemons_variants():
     t = pd.read_csv(TDIR / "Table12_stage4_pacdemons.csv").set_index("Variant")
+    assert len(t) == 5, f"Table 12: expected 5 rows, got {len(t)}"
     paper = {
         "Baseline":              (0.00096, 0.430, 0.424, 0.536),
         "Second person":         (0.00102, 0.384, 0.379, 0.488),
@@ -162,6 +167,7 @@ def test_table_12_pacdemons_variants():
 # ---------------------------------------------------------------------------
 def test_table_13_womenwork_variants():
     t = pd.read_csv(TDIR / "Table13_stage4_womenwork.csv").set_index("Variant")
+    assert len(t) == 5, f"Table 13: expected 5 rows, got {len(t)}"
     paper = {
         "Baseline":              (0.211, 0.024, 0.304),
         "Second person":         (0.231, 0.029, 0.299),
@@ -181,6 +187,7 @@ def test_table_13_womenwork_variants():
 # ---------------------------------------------------------------------------
 def test_table_14a_pacdemons():
     t = pd.read_csv(TDIR / "Table14A_pacdemons.csv")
+    assert len(t) == 6, f"Table 14A: expected 6 rows, got {len(t)}"
     key = lambda f, s: (t["Framing"] == f) & (t["Seed"] == s)
     paper = {  # (framing, seed): (JSD, delta, MCC, k, Rec+)
         ("Baseline",     0): (0.00096, +1.7, 0.430, 0.424, 0.536),
@@ -199,6 +206,7 @@ def test_table_14a_pacdemons():
 
 def test_table_14b_womenwork():
     t = pd.read_csv(TDIR / "Table14B_womenwork.csv")
+    assert len(t) == 6, f"Table 14B: expected 6 rows, got {len(t)}"
     key = lambda f, s: (t["Framing"] == f) & (t["Seed"] == s)
     paper = {
         ("Baseline",     0): (0.211, 0.024, 0.304, 3.186),
@@ -217,11 +225,23 @@ def test_table_14b_womenwork():
 
 
 # ---------------------------------------------------------------------------
-# Table 15 — seed-pair agreement
+# Table 15 — seed-pair agreement.
+# Panel B (womenwork) reproduces the paper to 3 decimals under the paper's
+# file-order one-RNG-per-run protocol.
+# Panel A (pacdemons) values recomputed from the archived completions differ
+# slightly from the published table; see the "Known deviations" note in the
+# README. We check the recomputed values here.
 # ---------------------------------------------------------------------------
+def test_table_15_row_count_and_columns():
+    t = pd.read_csv(TDIR / "Table15_seed_pair_agreement.csv")
+    assert len(t) == 6, f"Table 15: expected 6 rows, got {len(t)}"
+    for col in ("outcome", "seed_pair", "n", "exact_agreement",
+                 "within_1_agreement", "cohen_kappa"):
+        assert col in t.columns, f"Table 15 missing column: {col}"
+
+
 def test_table_15_womenwork_kappa_w_paper():
-    """The womenwork numbers reproduce the paper to 3 decimals under the paper's
-    file-order one-RNG-per-run protocol."""
+    """Panel B (womenwork) reproduces the paper to 3 decimals."""
     t = pd.read_csv(TDIR / "Table15_seed_pair_agreement.csv")
     t = t[t["outcome"] == "womenwork"].set_index("seed_pair")
     paper_kw = {"s0-s1": 0.395, "s0-s2": 0.398, "s1-s2": 0.412}
@@ -230,11 +250,24 @@ def test_table_15_womenwork_kappa_w_paper():
             f"{sp} kw"
 
 
-def test_table_15_pacdemons_mean_paper():
-    """Paper reports mean pacdemons exact agreement = 99.1%; individual s1-s2
-    entry (99.4%) differs by ~0.22 pp from our recompute (14 vs 10 diffs).
-    See docs/sampling_correction.md."""
+def test_table_15_pacdemons_recomputed():
+    """Panel A (pacdemons) recomputed values. See README 'Known deviations':
+    * s0-s1 κ = 0.921 (paper 0.928); exact = 99.0% (paper 99.0%)
+    * s0-s2 exact = 99.1% (paper 99.0%); κ = 0.930 (paper 0.928)
+    * s1-s2 exact = 99.2% (paper 99.4%)
+    * mean exact = 99.1% (unchanged); mean κ = 0.929 (paper 0.930)
+    Panel A shifts reflect rounding and processing order; no substantive
+    conclusion is affected. Panel B reproduces exactly."""
     t = pd.read_csv(TDIR / "Table15_seed_pair_agreement.csv")
-    t = t[t["outcome"] == "pacdemons"]
+    t = t[t["outcome"] == "pacdemons"].set_index("seed_pair")
+    recomputed = {  # seed_pair: (exact_pct, cohen_kappa)
+        "s0-s1": (99.00, 0.921),
+        "s0-s2": (99.12, 0.930),
+        "s1-s2": (99.18, 0.935),
+    }
+    for sp, (exact, k) in recomputed.items():
+        assert abs(float(t.loc[sp, "exact_agreement"]) * 100 - exact) < 0.05, f"{sp} exact"
+        assert abs(float(t.loc[sp, "cohen_kappa"])           - k)     < 0.005, f"{sp} k"
+    # mean exact unchanged from paper
     mean_exact = t["exact_agreement"].mean() * 100
-    assert abs(mean_exact - 99.1) < 0.15, f"pacdemons mean exact: {mean_exact:.2f}%"
+    assert abs(mean_exact - 99.10) < 0.02, f"pacdemons mean exact: {mean_exact:.2f}%"

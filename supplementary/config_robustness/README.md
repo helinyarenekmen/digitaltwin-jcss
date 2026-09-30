@@ -17,18 +17,24 @@ paper's scope (e.g., normative political attitudes such as `polminor`,
 `polfrlim`, `thimmig`), sat downstream of the main calibration outcome
 (`pacdemons`), or were superseded by cleaner probes.
 
-| Folder                             | Removed outcome | Protocol |
-|------------------------------------|-----------------|----------|
-| `C6-holdout-pacdemons`             | pacdemons (paper's main outcome — see Section 4) | binary  |
-| `C6-holdout-pacparty`              | pacparty (party political activities)             | binary  |
-| `C6-holdout-pacboycott`            | pacboycott (product boycott)                      | binary  |
-| `C6-holdout-paconline`             | paconline (online political sharing)              | binary  |
-| `C6-holdout-paccimer`              | paccimer (CİMER complaint)                        | binary  |
-| `C6-holdout-paccult`               | paccult (social/cultural volunteering)            | binary  |
-| `C6-holdout-paccharity`            | paccharity (charity participation)                | binary  |
-| `C6-holdout-polminor`              | polminor (minorities' rights protected)           | ordinal |
-| `C6-holdout-polfrlim`              | polfrlim (freedoms may be limited for anti-terror)| ordinal |
-| `C6-holdout-thimmig`               | thimmig (immigrants as threat, 0–10)              | ordinal |
+| Folder                     | Removed variable(s)                                 | Protocol |
+|----------------------------|-----------------------------------------------------|----------|
+| `C6-no-participation`      | ALL 9 past-year participation vars (predicts pacdemons) | binary  |
+| `C6-holdout-pacparty`      | pacparty (party political activities)               | binary  |
+| `C6-holdout-pacboycott`    | pacboycott (product boycott)                        | binary  |
+| `C6-holdout-paconline`     | paconline (online political sharing)                | binary  |
+| `C6-holdout-paccimer`      | paccimer (CİMER complaint)                          | binary  |
+| `C6-holdout-paccult`       | paccult (social/cultural volunteering)              | binary  |
+| `C6-holdout-paccharity`    | paccharity (charity participation)                  | binary  |
+| `C6-holdout-polminor`      | polminor (minorities' rights protected)             | ordinal |
+| `C6-holdout-polfrlim`      | polfrlim (freedoms may be limited for anti-terror)  | ordinal |
+| `C6-holdout-thimmig`       | thimmig (immigrants as threat, 0–10)                | ordinal |
+
+`C6-no-participation` (formerly `C7starpacdemons` internally) is the only
+probe here that drops multiple variables at once: it removes the entire
+past-year political-participation family (paccontact, paccompl, paccimer,
+pacparty, pacvolunteer, pacboycott, paconline, paccult, paccharity) and
+scores against pacdemons under the paper's calibrated binary protocol.
 
 Each folder contains `metrics.csv`, `predictions.jsonl`, and
 `gt_vs_pred.{pdf,png}`. `all_16_summary.csv` aggregates all sixteen holdout

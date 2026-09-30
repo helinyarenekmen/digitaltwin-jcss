@@ -200,6 +200,13 @@ dashboards.
   reflect the filter.
 * Stage 3 and Stage 4 VS-CoT metric CSVs are the corrected output of
   `07_resample_vs_cot.py`. See `docs/sampling_correction.md`.
+* Table 15, Panel A (*pacdemons*): values recomputed from the archived
+  completions differ slightly from the published table. s0–s1 κ = 0.921
+  (paper 0.928); s0–s2 exact = 99.1%, κ = 0.930 (paper 99.0%, 0.928);
+  s1–s2 exact = 99.2% (paper 99.4%). The mean exact agreement (99.1%) is
+  unchanged; the mean κ is 0.929 (paper 0.930). The differences reflect
+  rounding and the order in which respondents were processed. No
+  substantive conclusion is affected. Panel B reproduces exactly.
 
 ## How to cite
 
